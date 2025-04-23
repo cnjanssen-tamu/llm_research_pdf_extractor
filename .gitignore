@@ -30,6 +30,7 @@ staticfiles/
 
 # Environment variables
 .env
+*.swp
 
 # VS Code
 .vscode/
