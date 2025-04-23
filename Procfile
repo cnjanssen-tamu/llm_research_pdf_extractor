@@ -1,1 +1,1 @@
-web: gunicorn core.wsgi:application 
+web: gunicorn pdf_processor.wsgi:application 
