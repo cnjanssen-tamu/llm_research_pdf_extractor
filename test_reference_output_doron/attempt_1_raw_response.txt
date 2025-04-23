@@ -1,0 +1,526 @@
+{
+  "references": [
+    {
+      "citation_text": "Rabson SM, Stier PL, Baumgartner JC et al. Metastasis of cancer to cancer. Am J Clin Pathol 1954; 24:572-579.",
+      "source_type": "journal",
+      "authors": [
+        "Rabson SM",
+        "Stier PL",
+        "Baumgartner JC et al."
+      ],
+      "title": "Metastasis of cancer to cancer",
+      "source_name": "Am J Clin Pathol",
+      "publication_year": 1954,
+      "volume": "24",
+      "issue": null,
+      "pages": "572-579",
+      "doi_or_url": null,
+      "confidence": 95
+    },
+    {
+      "citation_text": "Moertel CG, Dockerty MB, Baggenstoss AH. Multiple primary malignant neoplasms III Tumors of multicentric origin. Cancer 1961; 14:238-248.",
+      "source_type": "journal",
+      "authors": [
+        "Moertel CG",
+        "Dockerty MB",
+        "Baggenstoss AH"
+      ],
+      "title": "Multiple primary malignant neoplasms III Tumors of multicentric origin",
+      "source_name": "Cancer",
+      "publication_year": 1961,
+      "volume": "14",
+      "issue": null,
+      "pages": "238-248",
+      "doi_or_url": null,
+      "confidence": 95
+    },
+    {
+      "citation_text": "Moertel CG. Incidence and significance of multiple primary malignant neoplasms. Ann NY Acad Sci 1964; 114:886-895.",
+      "source_type": "journal",
+      "authors": [
+        "Moertel CG"
+      ],
+      "title": "Incidence and significance of multiple primary malignant neoplasms",
+      "source_name": "Ann NY Acad Sci",
+      "publication_year": 1964,
+      "volume": "114",
+      "issue": null,
+      "pages": "886-895",
+      "doi_or_url": null,
+      "confidence": 95
+    },
+    {
+      "citation_text": "Richardson JF, Katayama I. Neoplasm to neoplasm metastasis. Arch Pathol 1971; 91:135-139.",
+      "source_type": "journal",
+      "authors": [
+        "Richardson JF",
+        "Katayama I"
+      ],
+      "title": "Neoplasm to neoplasm metastasis",
+      "source_name": "Arch Pathol",
+      "publication_year": 1971,
+      "volume": "91",
+      "issue": null,
+      "pages": "135-139",
+      "doi_or_url": null,
+      "confidence": 95
+    },
+    {
+      "citation_text": "Fried NM. Metastatic inoculation of a meningioma by cancer cells from a bronchogenic carcinoma. Am J Pathol 1930; 6:47-52.",
+      "source_type": "journal",
+      "authors": [
+        "Fried NM"
+      ],
+      "title": "Metastatic inoculation of a meningioma by cancer cells from a bronchogenic carcinoma",
+      "source_name": "Am J Pathol",
+      "publication_year": 1930,
+      "volume": "6",
+      "issue": null,
+      "pages": "47-52",
+      "doi_or_url": null,
+      "confidence": 95
+    },
+    {
+      "citation_text": "Bernstein SA. Uber Karzinometastase in einem Duraendothe- liom. Zentralbl Allg Pathol 1933; 58:163-166.",
+      "source_type": "journal",
+      "authors": [
+        "Bernstein SA"
+      ],
+      "title": "Uber Karzinometastase in einem Duraendotheliom",
+      "source_name": "Zentralbl Allg Pathol",
+      "publication_year": 1933,
+      "volume": "58",
+      "issue": null,
+      "pages": "163-166",
+      "doi_or_url": null,
+      "confidence": 95
+    },
+    {
+      "citation_text": "Lodrini S, Savoiardo M. Metastases of carcinoma to intra-cranial meningioma. Cancer 1981; 48:2668-2673.",
+      "source_type": "journal",
+      "authors": [
+        "Lodrini S",
+        "Savoiardo M"
+      ],
+      "title": "Metastases of carcinoma to intra-cranial meningioma",
+      "source_name": "Cancer",
+      "publication_year": 1981,
+      "volume": "48",
+      "issue": null,
+      "pages": "2668-2673",
+      "doi_or_url": null,
+      "confidence": 95
+    },
+    {
+      "citation_text": "Störtebecker TP. Metastatic hypernephroma of the brain from a neurosurgical point of view. J Neurosurg 1951; 8:185-197.",
+      "source_type": "journal",
+      "authors": [
+        "Störtebecker TP"
+      ],
+      "title": "Metastatic hypernephroma of the brain from a neurosurgical point of view",
+      "source_name": "J Neurosurg",
+      "publication_year": 1951,
+      "volume": "8",
+      "issue": null,
+      "pages": "185-197",
+      "doi_or_url": null,
+      "confidence": 95
+    },
+    {
+      "citation_text": "Lapresle J, Netsky MG, Zimmerman HM. The pathology of meningiomas: A study of 121 cases. Am J Pathol 1952; 28:757-791.",
+      "source_type": "journal",
+      "authors": [
+        "Lapresle J",
+        "Netsky MG",
+        "Zimmerman HM"
+      ],
+      "title": "The pathology of meningiomas: A study of 121 cases",
+      "source_name": "Am J Pathol",
+      "publication_year": 1952,
+      "volume": "28",
+      "issue": null,
+      "pages": "757-791",
+      "doi_or_url": null,
+      "confidence": 95
+    },
+    {
+      "citation_text": "Osterberg DH. Metastases of carcinoma to meningioma. J Neurosurg 1957; 14:337-343.",
+      "source_type": "journal",
+      "authors": [
+        "Osterberg DH"
+      ],
+      "title": "Metastases of carcinoma to meningioma",
+      "source_name": "J Neurosurg",
+      "publication_year": 1957,
+      "volume": "14",
+      "issue": null,
+      "pages": "337-343",
+      "doi_or_url": null,
+      "confidence": 95
+    },
+    {
+      "citation_text": "Peison WB, Feigin I. Suprasellar meningioma containing meta- static carcinoma. J Neurosurg 1961; 18:688-689.",
+      "source_type": "journal",
+      "authors": [
+        "Peison WB",
+        "Feigin I"
+      ],
+      "title": "Suprasellar meningioma containing metastatic carcinoma",
+      "source_name": "J Neurosurg",
+      "publication_year": 1961,
+      "volume": "18",
+      "issue": null,
+      "pages": "688-689",
+      "doi_or_url": null,
+      "confidence": 95
+    },
+    {
+      "citation_text": "Best PV. Metastatic carcinoma in a meningioma. J Neurosurg 1963; 20:892-894.",
+      "source_type": "journal",
+      "authors": [
+        "Best PV"
+      ],
+      "title": "Metastatic carcinoma in a meningioma",
+      "source_name": "J Neurosurg",
+      "publication_year": 1963,
+      "volume": "20",
+      "issue": null,
+      "pages": "892-894",
+      "doi_or_url": null,
+      "confidence": 95
+    },
+    {
+      "citation_text": "Wilson CB, Jenevein EP Jr, Bryant LR. Carcinoma of the lung metastatic to falx meningioma: Case Report. J Neurosurg 1967; 27:161-165.",
+      "source_type": "journal",
+      "authors": [
+        "Wilson CB",
+        "Jenevein EP Jr",
+        "Bryant LR"
+      ],
+      "title": "Carcinoma of the lung metastatic to falx meningioma: Case Report",
+      "source_name": "J Neurosurg",
+      "publication_year": 1967,
+      "volume": "27",
+      "issue": null,
+      "pages": "161-165",
+      "doi_or_url": null,
+      "confidence": 95
+    },
+    {
+      "citation_text": "Wolintz AH, Mastri A. Metastasis of Carcinoma of lung to sphenoidal ridge meningioma: Case Report. NY State J Med 1970; 70:2592-2598.",
+      "source_type": "journal",
+      "authors": [
+        "Wolintz AH",
+        "Mastri A"
+      ],
+      "title": "Metastasis of Carcinoma of lung to sphenoidal ridge meningioma: Case Report",
+      "source_name": "NY State J Med",
+      "publication_year": 1970,
+      "volume": "70",
+      "issue": null,
+      "pages": "2592-2598",
+      "doi_or_url": null,
+      "confidence": 95
+    },
+    {
+      "citation_text": "Zoos BA. Neoplastic metastases into a tumor. Cited in: Döring L. Metastasis of carcinoma of prostate to meningioma: Case report. Virchows Arch [A] 1975; 366 (in Russian). Arkh Patol 1970; 32:68-70.",
+      "source_type": "journal",
+      "authors": [
+        "Zoos BA"
+      ],
+      "title": "Neoplastic metastases into a tumor",
+      "source_name": "Virchows Arch [A]",
+      "publication_year": 1975,
+      "volume": "366",
+      "issue": null,
+      "pages": null,
+      "doi_or_url": null,
+      "confidence": 70
+    },
+    {
+      "citation_text": "Anlyan FH, Heinzen BR, Carras R. Metastasis of tumor to second different tumor: Collision tumors (Letter). JAMA 1970; 212:2124.",
+      "source_type": "journal",
+      "authors": [
+        "Anlyan FH",
+        "Heinzen BR",
+        "Carras R"
+      ],
+      "title": "Metastasis of tumor to second different tumor: Collision tumors (Letter)",
+      "source_name": "JAMA",
+      "publication_year": 1970,
+      "volume": "212",
+      "issue": null,
+      "pages": "2124",
+      "doi_or_url": null,
+      "confidence": 95
+    },
+    {
+      "citation_text": "Theologides A, Lee J. Tumor to tumor metastasis (Letter). JAMA 1972; 219:384.",
+      "source_type": "journal",
+      "authors": [
+        "Theologides A",
+        "Lee J"
+      ],
+      "title": "Tumor to tumor metastasis (Letter)",
+      "source_name": "JAMA",
+      "publication_year": 1972,
+      "volume": "219",
+      "issue": null,
+      "pages": "384",
+      "doi_or_url": null,
+      "confidence": 95
+    },
+    {
+      "citation_text": "Döring L. Metastasis of carcinoma of prostate to meningioma: Case report. Virchows Arch [A] 1975; 366:87-91.",
+      "source_type": "journal",
+      "authors": [
+        "Döring L"
+      ],
+      "title": "Metastasis of carcinoma of prostate to meningioma: Case report",
+      "source_name": "Virchows Arch [A]",
+      "publication_year": 1975,
+      "volume": "366",
+      "issue": null,
+      "pages": "87-91",
+      "doi_or_url": null,
+      "confidence": 95
+    },
+    {
+      "citation_text": "Weens TD, Garcia JH. Intracranial meningioma containing metastatic foci. South Med J 1977; 70:503-505.",
+      "source_type": "journal",
+      "authors": [
+        "Weens TD",
+        "Garcia JH"
+      ],
+      "title": "Intracranial meningioma containing metastatic foci",
+      "source_name": "South Med J",
+      "publication_year": 1977,
+      "volume": "70",
+      "issue": null,
+      "pages": "503-505",
+      "doi_or_url": null,
+      "confidence": 95
+    },
+    {
+      "citation_text": "Wu WQ, Hiszczynskyi R. Metastasis of carcinoma of cervix uteri to convexity meningioma. Surg Neurol 1977; 8:327-329.",
+      "source_type": "journal",
+      "authors": [
+        "Wu WQ",
+        "Hiszczynskyi R"
+      ],
+      "title": "Metastasis of carcinoma of cervix uteri to convexity meningioma",
+      "source_name": "Surg Neurol",
+      "publication_year": 1977,
+      "volume": "8",
+      "issue": null,
+      "pages": "327-329",
+      "doi_or_url": null,
+      "confidence": 95
+    },
+    {
+      "citation_text": "Hope DT, Symon L. Metastasis of carcinoma to meningioma. Acta Neurochir (Wien) 1978; 40:307-313.",
+      "source_type": "journal",
+      "authors": [
+        "Hope DT",
+        "Symon L"
+      ],
+      "title": "Metastasis of carcinoma to meningioma",
+      "source_name": "Acta Neurochir (Wien)",
+      "publication_year": 1978,
+      "volume": "40",
+      "issue": null,
+      "pages": "307-313",
+      "doi_or_url": null,
+      "confidence": 95
+    },
+    {
+      "citation_text": "Di Bonito L, Bianchi C. Métastase d'un cancer mammaire dans un méningiome. Semin Hop Paris 1979; 55:171-172.",
+      "source_type": "journal",
+      "authors": [
+        "Di Bonito L",
+        "Bianchi C"
+      ],
+      "title": "Métastase d'un cancer mammaire dans un méningiome",
+      "source_name": "Semin Hop Paris",
+      "publication_year": 1979,
+      "volume": "55",
+      "issue": null,
+      "pages": "171-172",
+      "doi_or_url": null,
+      "confidence": 95
+    },
+    {
+      "citation_text": "Chambers PW, Davis RL, Buck FS. Metastasis to primary intra- cranial meningiomas and neurilemmomas. Arch Pathol Lab Med 1980; 104:350-354.",
+      "source_type": "journal",
+      "authors": [
+        "Chambers PW",
+        "Davis RL",
+        "Buck FS"
+      ],
+      "title": "Metastasis to primary intra- cranial meningiomas and neurilemmomas",
+      "source_name": "Arch Pathol Lab Med",
+      "publication_year": 1980,
+      "volume": "104",
+      "issue": null,
+      "pages": "350-354",
+      "doi_or_url": null,
+      "confidence": 95
+    },
+    {
+      "citation_text": "Nunnery E, Kahn LB, Rudnick SA. Breast carcinoma meta- static to meningioma. Arch Pathol Lab Med 1980; 104:392-393.",
+      "source_type": "journal",
+      "authors": [
+        "Nunnery E",
+        "Kahn LB",
+        "Rudnick SA"
+      ],
+      "title": "Breast carcinoma meta- static to meningioma",
+      "source_name": "Arch Pathol Lab Med",
+      "publication_year": 1980,
+      "volume": "104",
+      "issue": null,
+      "pages": "392-393",
+      "doi_or_url": null,
+      "confidence": 95
+    },
+    {
+      "citation_text": "Khang-Loon Ho. Metastasis of carcinoma to meningioma. Arch Pathol Lab Med 1980; 104:394-395.",
+      "source_type": "journal",
+      "authors": [
+        "Khang-Loon Ho"
+      ],
+      "title": "Metastasis of carcinoma to meningioma",
+      "source_name": "Arch Pathol Lab Med",
+      "publication_year": 1980,
+      "volume": "104",
+      "issue": null,
+      "pages": "394-395",
+      "doi_or_url": null,
+      "confidence": 95
+    },
+    {
+      "citation_text": "Bernstein RA, Grumet KA, Wetzel N. Metastasis of prostatic carcinoma to intra-cranial meningioma. J Neurosurg 1983; 58:774- 777.",
+      "source_type": "journal",
+      "authors": [
+        "Bernstein RA",
+        "Grumet KA",
+        "Wetzel N"
+      ],
+      "title": "Metastasis of prostatic carcinoma to intra-cranial meningioma",
+      "source_name": "J Neurosurg",
+      "publication_year": 1983,
+      "volume": "58",
+      "issue": null,
+      "pages": "774-777",
+      "doi_or_url": null,
+      "confidence": 95
+    },
+    {
+      "citation_text": "Zulch KJ. Brain tumors: Their Biology and Their Pathology, 2nd ed. New York: Springer-Verlag, 1965; 265.",
+      "source_type": "book",
+      "authors": [
+        "Zulch KJ"
+      ],
+      "title": "Brain tumors: Their Biology and Their Pathology, 2nd ed.",
+      "source_name": "Brain tumors: Their Biology and Their Pathology",
+      "publication_year": 1965,
+      "volume": null,
+      "issue": null,
+      "pages": "265",
+      "doi_or_url": null,
+      "confidence": 90
+    },
+    {
+      "citation_text": "Rubinstein LJ. Tumors of the Central Nervous System. In: Atlas of Tumor Pathology, Series 2, Fascicle 6. Washington, DC: Armed Forces Institute of Pathology, 1972; 169.",
+      "source_type": "book_chapter",
+      "authors": [
+        "Rubinstein LJ"
+      ],
+      "title": "Tumors of the Central Nervous System",
+      "source_name": "Atlas of Tumor Pathology, Series 2, Fascicle 6",
+      "publication_year": 1972,
+      "volume": null,
+      "issue": null,
+      "pages": "169",
+      "doi_or_url": null,
+      "confidence": 95
+    },
+    {
+      "citation_text": "Russel DS, Rubinstein LJ. Pathology of Tumors of the Nervous System, 4th ed. Baltimore: Williams & Wilkins, 1977; 358.",
+      "source_type": "book",
+      "authors": [
+        "Russel DS",
+        "Rubinstein LJ"
+      ],
+      "title": "Pathology of Tumors of the Nervous System, 4th ed.",
+      "source_name": "Pathology of Tumors of the Nervous System",
+      "publication_year": 1977,
+      "volume": null,
+      "issue": null,
+      "pages": "358",
+      "doi_or_url": null,
+      "confidence": 95
+    },
+    {
+      "citation_text": "Kepes JJ. Meningiomas: Biology, Pathology and Differential Diagnosis. New York: Masson Publishing USA, 1982; 1-206.",
+      "source_type": "book",
+      "authors": [
+        "Kepes JJ"
+      ],
+      "title": "Meningiomas: Biology, Pathology and Differential Diagnosis",
+      "source_name": "Meningiomas: Biology, Pathology and Differential Diagnosis",
+      "publication_year": 1982,
+      "volume": null,
+      "issue": null,
+      "pages": "1-206",
+      "doi_or_url": null,
+      "confidence": 95
+    },
+    {
+      "citation_text": "Gyori E. Metastatic carcinoma in meningioma. South Med J 1976; 69:514-517.",
+      "source_type": "journal",
+      "authors": [
+        "Gyori E"
+      ],
+      "title": "Metastatic carcinoma in meningioma",
+      "source_name": "South Med J",
+      "publication_year": 1976,
+      "volume": "69",
+      "issue": null,
+      "pages": "514-517",
+      "doi_or_url": null,
+      "confidence": 95
+    },
+    {
+      "citation_text": "Schoenberg BS. Multiple primary neoplasms and the nervous system. Cancer 1977; 40:1961-1967.",
+      "source_type": "journal",
+      "authors": [
+        "Schoenberg BS"
+      ],
+      "title": "Multiple primary neoplasms and the nervous system",
+      "source_name": "Cancer",
+      "publication_year": 1977,
+      "volume": "40",
+      "issue": null,
+      "pages": "1961-1967",
+      "doi_or_url": null,
+      "confidence": 95
+    },
+    {
+      "citation_text": "Savoiardo M, Lodrini S. Hypodense area within a meningioma. Neuroradiology 1980; 20:107-110.",
+      "source_type": "journal",
+      "authors": [
+        "Savoiardo M",
+        "Lodrini S"
+      ],
+      "title": "Hypodense area within a meningioma",
+      "source_name": "Neuroradiology",
+      "publication_year": 1980,
+      "volume": "20",
+      "issue": null,
+      "pages": "107-110",
+      "doi_or_url": null,
+      "confidence": 95
+    }
+  ]
+}

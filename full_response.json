@@ -1,0 +1,603 @@
+{
+  "candidates": [
+    {
+      "content": {
+        "parts": [
+          {
+            "text": ""
+          }
+        ],
+        "role": "model"
+      },
+      "finish_reason": 2,
+      "index": 0,
+      "safety_ratings": [
+        {
+          "category": 10,
+          "probability": 1,
+          "blocked": false
+        },
+        {
+          "category": 8,
+          "probability": 1,
+          "blocked": false
+        },
+        {
+          "category": 9,
+          "probability": 1,
+          "blocked": false
+        },
+        {
+          "category": 7,
+          "probability": 1,
+          "blocked": false
+        }
+      ],
+      "citation_metadata": {
+        "citation_sources": [
+          {
+            "start_index": 600,
+            "end_index": 775,
+            "uri": "https://ijmscr.org/index.php/ijmscrs/article/view/999",
+            "license_": ""
+          },
+          {
+            "start_index": 658,
+            "end_index": 817,
+            "uri": "https://www.frontiersin.org/journals/endocrinology/articles/10.3389/fendo.2024.1407615/epub?isPublishedV2=false",
+            "license_": ""
+          },
+          {
+            "start_index": 843,
+            "end_index": 1018,
+            "uri": "https://ijmscr.org/index.php/ijmscrs/article/view/999",
+            "license_": ""
+          },
+          {
+            "start_index": 901,
+            "end_index": 1060,
+            "uri": "https://www.frontiersin.org/journals/endocrinology/articles/10.3389/fendo.2024.1407615/epub?isPublishedV2=false",
+            "license_": ""
+          },
+          {
+            "start_index": 1453,
+            "end_index": 1606,
+            "uri": "",
+            "license_": ""
+          },
+          {
+            "start_index": 1710,
+            "end_index": 1863,
+            "uri": "",
+            "license_": ""
+          },
+          {
+            "start_index": 2002,
+            "end_index": 2155,
+            "uri": "",
+            "license_": ""
+          },
+          {
+            "start_index": 2286,
+            "end_index": 2436,
+            "uri": "https://www.frontiersin.org/journals/neurology/articles/10.3389/fneur.2023.1270046/epub",
+            "license_": ""
+          },
+          {
+            "start_index": 2381,
+            "end_index": 2509,
+            "uri": "https://cco.amegroups.com/article/view/15105/15716",
+            "license_": ""
+          },
+          {
+            "start_index": 2560,
+            "end_index": 2746,
+            "uri": "https://www.scielo.br/j/bjmbr/a/XZzSpjwcHQ7kcqbhwQhyyYQ/?lang=en",
+            "license_": ""
+          },
+          {
+            "start_index": 3139,
+            "end_index": 3289,
+            "uri": "https://www.frontiersin.org/journals/neurology/articles/10.3389/fneur.2023.1270046/epub",
+            "license_": ""
+          },
+          {
+            "start_index": 3164,
+            "end_index": 3336,
+            "uri": "https://www.scribd.com/document/414871637/menigeoma",
+            "license_": ""
+          },
+          {
+            "start_index": 3409,
+            "end_index": 3581,
+            "uri": "https://www.scribd.com/document/414871637/menigeoma",
+            "license_": ""
+          },
+          {
+            "start_index": 3980,
+            "end_index": 4194,
+            "uri": "https://www.frontiersin.org/journals/neurology/articles/10.3389/fneur.2023.1270046/epub",
+            "license_": ""
+          },
+          {
+            "start_index": 4076,
+            "end_index": 4265,
+            "uri": "http://neuros-teikyo.com/kenkyu/index.html",
+            "license_": ""
+          },
+          {
+            "start_index": 4335,
+            "end_index": 4524,
+            "uri": "https://www.frontiersin.org/journals/neurology/articles/10.3389/fneur.2023.1270046/epub",
+            "license_": ""
+          },
+          {
+            "start_index": 4406,
+            "end_index": 4595,
+            "uri": "http://neuros-teikyo.com/kenkyu/index.html",
+            "license_": ""
+          },
+          {
+            "start_index": 4772,
+            "end_index": 4924,
+            "uri": "http://neuros-teikyo.com/kenkyu/index.html",
+            "license_": ""
+          },
+          {
+            "start_index": 5068,
+            "end_index": 5226,
+            "uri": "https://www.frontiersin.org/journals/neurology/articles/10.3389/fneur.2023.1270046/epub",
+            "license_": ""
+          },
+          {
+            "start_index": 5173,
+            "end_index": 5316,
+            "uri": "https://patents.justia.com/patent/11946935",
+            "license_": ""
+          },
+          {
+            "start_index": 5343,
+            "end_index": 5513,
+            "uri": "https://neuro-dev.unilim.fr/spip.php?article1609",
+            "license_": ""
+          },
+          {
+            "start_index": 5415,
+            "end_index": 5558,
+            "uri": "https://patents.justia.com/patent/11946935",
+            "license_": ""
+          },
+          {
+            "start_index": 5905,
+            "end_index": 6058,
+            "uri": "https://www.frontiersin.org/journals/neurology/articles/10.3389/fneur.2023.1270046/epub",
+            "license_": ""
+          },
+          {
+            "start_index": 5984,
+            "end_index": 6136,
+            "uri": "https://patents.justia.com/patent/11946935",
+            "license_": ""
+          },
+          {
+            "start_index": 6163,
+            "end_index": 6338,
+            "uri": "https://www.scielo.br/j/anp/a/bf8zWCF7yRxtF3rPmBCmvyd/?lang=en",
+            "license_": ""
+          },
+          {
+            "start_index": 6214,
+            "end_index": 6366,
+            "uri": "https://patents.justia.com/patent/11946935",
+            "license_": ""
+          },
+          {
+            "start_index": 6729,
+            "end_index": 6907,
+            "uri": "https://pearl.plymouth.ac.uk/bitstream/handle/10026.1/9710/Manuscript_Provenzano_Ammoun_Hanemann.docx?sequence=3",
+            "license_": ""
+          },
+          {
+            "start_index": 6788,
+            "end_index": 6944,
+            "uri": "https://patents.justia.com/patent/11946935",
+            "license_": ""
+          },
+          {
+            "start_index": 6970,
+            "end_index": 7148,
+            "uri": "https://pearl.plymouth.ac.uk/bitstream/handle/10026.1/9710/Manuscript_Provenzano_Ammoun_Hanemann.docx?sequence=3",
+            "license_": ""
+          },
+          {
+            "start_index": 7029,
+            "end_index": 7185,
+            "uri": "https://patents.justia.com/patent/11946935",
+            "license_": ""
+          },
+          {
+            "start_index": 7528,
+            "end_index": 7683,
+            "uri": "https://www.frontiersin.org/journals/neurology/articles/10.3389/fneur.2023.1270046/epub",
+            "license_": ""
+          },
+          {
+            "start_index": 7607,
+            "end_index": 7758,
+            "uri": "https://www.frontiersin.org/journals/oncology/articles/10.3389/fonc.2021.747592/epub",
+            "license_": ""
+          },
+          {
+            "start_index": 7805,
+            "end_index": 7958,
+            "uri": "https://www.frontiersin.org/articles/10.3389/fonc.2021.750690/epub",
+            "license_": ""
+          },
+          {
+            "start_index": 7835,
+            "end_index": 7986,
+            "uri": "https://www.frontiersin.org/journals/oncology/articles/10.3389/fonc.2021.747592/epub",
+            "license_": ""
+          },
+          {
+            "start_index": 8348,
+            "end_index": 8535,
+            "uri": "https://ibommedicaljournal.org/index.php/imjhome/article/view/310/759",
+            "license_": ""
+          },
+          {
+            "start_index": 8447,
+            "end_index": 8595,
+            "uri": "https://www.frontiersin.org/journals/oncology/articles/10.3389/fonc.2022.892004/epub",
+            "license_": ""
+          },
+          {
+            "start_index": 8628,
+            "end_index": 8815,
+            "uri": "https://ibommedicaljournal.org/index.php/imjhome/article/view/310/759",
+            "license_": ""
+          },
+          {
+            "start_index": 8727,
+            "end_index": 8875,
+            "uri": "https://www.frontiersin.org/journals/oncology/articles/10.3389/fonc.2022.892004/epub",
+            "license_": ""
+          },
+          {
+            "start_index": 9014,
+            "end_index": 9134,
+            "uri": "https://www.ncbi.nlm.nih.gov/gene/5430",
+            "license_": ""
+          },
+          {
+            "start_index": 9261,
+            "end_index": 9418,
+            "uri": "https://www.frontiersin.org/journals/neurology/articles/10.3389/fneur.2023.1270046/epub",
+            "license_": ""
+          },
+          {
+            "start_index": 9294,
+            "end_index": 9479,
+            "uri": "https://www.frontiersin.org/articles/10.3389/fonc.2022.931371/epub",
+            "license_": ""
+          },
+          {
+            "start_index": 9585,
+            "end_index": 9770,
+            "uri": "https://www.frontiersin.org/articles/10.3389/fonc.2022.931371/epub",
+            "license_": ""
+          },
+          {
+            "start_index": 9978,
+            "end_index": 10099,
+            "uri": "https://cdn.elifesciences.org/articles/70691/elife-70691-v2.xml",
+            "license_": ""
+          },
+          {
+            "start_index": 10244,
+            "end_index": 10398,
+            "uri": "https://www.frontiersin.org/journals/neurology/articles/10.3389/fneur.2023.1270046/epub",
+            "license_": ""
+          },
+          {
+            "start_index": 10370,
+            "end_index": 10525,
+            "uri": "https://www.frontiersin.org/journals/oncology/articles/10.3389/fonc.2024.1395985/epub?isPublishedV2=false",
+            "license_": ""
+          },
+          {
+            "start_index": 10551,
+            "end_index": 10740,
+            "uri": "https://qims.amegroups.org/article/view/117523/html",
+            "license_": ""
+          },
+          {
+            "start_index": 10647,
+            "end_index": 10802,
+            "uri": "https://www.frontiersin.org/journals/oncology/articles/10.3389/fonc.2024.1395985/epub?isPublishedV2=false",
+            "license_": ""
+          },
+          {
+            "start_index": 11175,
+            "end_index": 11335,
+            "uri": "https://www.frontiersin.org/journals/neurology/articles/10.3389/fneur.2023.1270046/epub",
+            "license_": ""
+          },
+          {
+            "start_index": 11336,
+            "end_index": 11482,
+            "uri": "https://www.frontiersin.org/journals/oncology/articles/10.3389/fonc.2021.662260/epub",
+            "license_": ""
+          },
+          {
+            "start_index": 11513,
+            "end_index": 11696,
+            "uri": "https://mnj.ub.ac.id/index.php/mnj/article/view/644",
+            "license_": ""
+          },
+          {
+            "start_index": 11638,
+            "end_index": 11784,
+            "uri": "https://www.frontiersin.org/journals/oncology/articles/10.3389/fonc.2021.662260/epub",
+            "license_": ""
+          },
+          {
+            "start_index": 11928,
+            "end_index": 12065,
+            "uri": "https://patents.google.com/patent/WO2021189082A1/en",
+            "license_": ""
+          },
+          {
+            "start_index": 12195,
+            "end_index": 12393,
+            "uri": "https://www.frontiersin.org/journals/neurology/articles/10.3389/fneur.2023.1270046/epub",
+            "license_": ""
+          },
+          {
+            "start_index": 12290,
+            "end_index": 12425,
+            "uri": "https://paperity.org/p/309774766/etiology-of-super-enhancer-reprogramming-and-activation-in-cancer",
+            "license_": ""
+          },
+          {
+            "start_index": 12486,
+            "end_index": 12656,
+            "uri": "https://www.frontiersin.org/journals/neurology/articles/10.3389/fneur.2023.1270046/epub",
+            "license_": ""
+          },
+          {
+            "start_index": 12553,
+            "end_index": 12688,
+            "uri": "https://paperity.org/p/309774766/etiology-of-super-enhancer-reprogramming-and-activation-in-cancer",
+            "license_": ""
+          },
+          {
+            "start_index": 13083,
+            "end_index": 13242,
+            "uri": "https://www.frontiersin.org/journals/neurology/articles/10.3389/fneur.2023.1270046/epub",
+            "license_": ""
+          },
+          {
+            "start_index": 13182,
+            "end_index": 13333,
+            "uri": "http://cco.amegroups.com/article/view/49600/html",
+            "license_": ""
+          },
+          {
+            "start_index": 13391,
+            "end_index": 13574,
+            "uri": "http://www.medscape.com/viewarticle/742064_2",
+            "license_": ""
+          },
+          {
+            "start_index": 13455,
+            "end_index": 13606,
+            "uri": "http://cco.amegroups.com/article/view/49600/html",
+            "license_": ""
+          },
+          {
+            "start_index": 14011,
+            "end_index": 14168,
+            "uri": "https://www.frontiersin.org/journals/neurology/articles/10.3389/fneur.2023.1270046/epub",
+            "license_": ""
+          },
+          {
+            "start_index": 14121,
+            "end_index": 14260,
+            "uri": "https://paperity.org/p/267828116/regression-of-intracranial-meningiomas-following-treatment-with-cabozantinib",
+            "license_": ""
+          },
+          {
+            "start_index": 14294,
+            "end_index": 14466,
+            "uri": "http://www.medscape.com/viewarticle/818661_10",
+            "license_": ""
+          },
+          {
+            "start_index": 14372,
+            "end_index": 14511,
+            "uri": "https://paperity.org/p/267828116/regression-of-intracranial-meningiomas-following-treatment-with-cabozantinib",
+            "license_": ""
+          },
+          {
+            "start_index": 14867,
+            "end_index": 15026,
+            "uri": "https://www.frontiersin.org/journals/neurology/articles/10.3389/fneur.2023.1270046/epub",
+            "license_": ""
+          },
+          {
+            "start_index": 14958,
+            "end_index": 15086,
+            "uri": "https://www.cancernetwork.com/view/treatment-meningioma-including-cases-no-further-surgical-or-radiotherapy-options",
+            "license_": ""
+          },
+          {
+            "start_index": 15142,
+            "end_index": 15293,
+            "uri": "http://uklira14.ru/id-6478.html",
+            "license_": ""
+          },
+          {
+            "start_index": 15198,
+            "end_index": 15326,
+            "uri": "https://www.cancernetwork.com/view/treatment-meningioma-including-cases-no-further-surgical-or-radiotherapy-options",
+            "license_": ""
+          },
+          {
+            "start_index": 15700,
+            "end_index": 15905,
+            "uri": "https://www.frontiersin.org/journals/neurology/articles/10.3389/fneur.2023.1270046/epub",
+            "license_": ""
+          },
+          {
+            "start_index": 16005,
+            "end_index": 16182,
+            "uri": "https://www.frontiersin.org/journals/neurology/articles/10.3389/fneur.2023.1270046/epub",
+            "license_": ""
+          },
+          {
+            "start_index": 16633,
+            "end_index": 16789,
+            "uri": "https://www.frontiersin.org/journals/neurology/articles/10.3389/fneur.2023.1270046/epub",
+            "license_": ""
+          },
+          {
+            "start_index": 16665,
+            "end_index": 16822,
+            "uri": "http://www.medscape.com/viewarticle/742064_2",
+            "license_": ""
+          },
+          {
+            "start_index": 16907,
+            "end_index": 17064,
+            "uri": "http://www.medscape.com/viewarticle/742064_2",
+            "license_": ""
+          },
+          {
+            "start_index": 17465,
+            "end_index": 17673,
+            "uri": "https://www.frontiersin.org/journals/neurology/articles/10.3389/fneur.2023.1270046/epub",
+            "license_": ""
+          },
+          {
+            "start_index": 17595,
+            "end_index": 17740,
+            "uri": "https://www.frontiersin.org/articles/10.3389/fonc.2022.850463/epub",
+            "license_": ""
+          },
+          {
+            "start_index": 17770,
+            "end_index": 17946,
+            "uri": "https://www.frontiersin.org/journals/neurology/articles/10.3389/fneur.2023.1270046/epub",
+            "license_": ""
+          },
+          {
+            "start_index": 17868,
+            "end_index": 18013,
+            "uri": "https://www.frontiersin.org/articles/10.3389/fonc.2022.850463/epub",
+            "license_": ""
+          },
+          {
+            "start_index": 18386,
+            "end_index": 18546,
+            "uri": "https://www.frontiersin.org/journals/neurology/articles/10.3389/fneur.2023.1270046/epub",
+            "license_": ""
+          },
+          {
+            "start_index": 18542,
+            "end_index": 18691,
+            "uri": "https://www.frontiersin.org/journals/oncology/articles/10.3389/fonc.2021.737523/epub",
+            "license_": ""
+          },
+          {
+            "start_index": 18723,
+            "end_index": 18908,
+            "uri": "https://www.scribd.com/document/414871637/menigeoma",
+            "license_": ""
+          },
+          {
+            "start_index": 18843,
+            "end_index": 18992,
+            "uri": "https://www.frontiersin.org/journals/oncology/articles/10.3389/fonc.2021.737523/epub",
+            "license_": ""
+          },
+          {
+            "start_index": 19134,
+            "end_index": 19262,
+            "uri": "https://www.oncotarget.com/article/27178/text/",
+            "license_": ""
+          },
+          {
+            "start_index": 19395,
+            "end_index": 19556,
+            "uri": "https://www.frontiersin.org/journals/neurology/articles/10.3389/fneur.2023.1270046/epub",
+            "license_": ""
+          },
+          {
+            "start_index": 19431,
+            "end_index": 19581,
+            "uri": "https://www.redalyc.org/journal/843/84374116004/",
+            "license_": ""
+          },
+          {
+            "start_index": 19647,
+            "end_index": 19797,
+            "uri": "https://www.redalyc.org/journal/843/84374116004/",
+            "license_": ""
+          },
+          {
+            "start_index": 20153,
+            "end_index": 20309,
+            "uri": "https://www.frontiersin.org/journals/neurology/articles/10.3389/fneur.2023.1270046/epub",
+            "license_": ""
+          },
+          {
+            "start_index": 20267,
+            "end_index": 20407,
+            "uri": "https://bombesinreceptor.com/index.php/osimertinib/",
+            "license_": ""
+          },
+          {
+            "start_index": 20457,
+            "end_index": 20618,
+            "uri": "https://jbcs.xsrv.jp/guideline/2022/b_index/frq6/",
+            "license_": ""
+          },
+          {
+            "start_index": 20556,
+            "end_index": 20713,
+            "uri": "https://www.proquest.com/docviewolopenaccess.indexfieldurl:logdoiusage/2892695800/https:$2f$2fdoi.org$2f10.1136$2fbmjopen-2023-072472?t:ac=2892695800&t:cp=maintain/docviewblocks",
+            "license_": ""
+          },
+          {
+            "start_index": 20835,
+            "end_index": 20965,
+            "uri": "https://www.ncc.go.jp/en/information/press_release/20190717/20190717152024.html",
+            "license_": ""
+          },
+          {
+            "start_index": 21083,
+            "end_index": 21232,
+            "uri": "https://www.frontiersin.org/journals/neurology/articles/10.3389/fneur.2023.1270046/epub",
+            "license_": ""
+          },
+          {
+            "start_index": 21169,
+            "end_index": 21291,
+            "uri": "https://www.ncbi.nlm.nih.gov/sites/pubmed?cmd=search&term=Scher%20H%5Bau%5D&dispmax=50",
+            "license_": ""
+          }
+        ]
+      },
+      "token_count": 0,
+      "grounding_attributions": [],
+      "avg_logprobs": 0.0
+    }
+  ],
+  "usage_metadata": {
+    "prompt_token_count": 2639,
+    "total_token_count": 2639,
+    "cached_content_token_count": 0,
+    "candidates_token_count": 0
+  }
+}

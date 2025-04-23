@@ -1,0 +1,264 @@
+<!-- templates/base.html -->
+{% load static %}
+<!DOCTYPE html lang="en" data-theme="light" data-bs-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% csrf_token %}
+    <meta name="csrf-token" content="{{ csrf_token }}">
+    <title>{% block title %}PDF Processor{% endblock %}</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{% static 'css/base.css' %}">
+    <link rel="stylesheet" href="{% static 'css/job-status-banner.css' %}">
+    <link rel="stylesheet" href="{% static 'css/modern-ui.css' %}">
+    <link rel="stylesheet" href="{% static 'css/box-inspired.css' %}">
+    
+    <!-- Debug CSS indicator -->
+    <style id="debug-css">
+        /* Debug CSS helpers to troubleshoot CSS loading */
+        body::before {
+            content: "CSS loaded";
+            position: fixed;
+            top: 0;
+            right: 0;
+            background: green;
+            color: white;
+            padding: 5px;
+            z-index: 9999;
+            font-size: 12px;
+        }
+        
+        /* Debug panel styling */
+        .debug-theme-info {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.85);
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            z-index: 9999;
+            font-size: 14px;
+            max-width: 350px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        }
+        
+        .debug-theme-info h5 {
+            margin-top: 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            padding-bottom: 8px;
+            margin-bottom: 12px;
+            font-size: 18px;
+        }
+        
+        .debug-theme-info p {
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .debug-theme-info code {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: monospace;
+            margin-left: 8px;
+        }
+        
+        .debug-theme-info hr {
+            border-color: rgba(255, 255, 255, 0.2);
+            margin: 12px 0;
+        }
+        
+        #toggleThemeDebug {
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            border-radius: 4px;
+            padding: 0.375rem 0.75rem;
+        }
+        
+        #toggleThemeDebug:hover {
+            background-color: rgba(0, 0, 0, 0.05);
+        }
+    </style>
+    
+    {% block extra_css %}{% endblock %}
+</head>
+<body class="box-theme">
+    <div class="debug-theme-info" id="debug-panel" style="display: none;">
+        <h5>Theme Debug Info</h5>
+        <p>Current theme: <code id="currentTheme">-</code></p>
+        <p>HTML data-theme: <code id="htmlDataTheme">-</code></p>
+        <p>HTML data-bs-theme: <code id="htmlBsDataTheme">-</code></p>
+        <p>Local storage theme: <code id="localStorageTheme">-</code></p>
+        <p>System preference: <code id="systemPreference">-</code></p>
+        <hr>
+        <button id="closeDebugPanel" class="btn btn-sm btn-light">Close</button>
+    </div>
+    
+    <nav class="navbar navbar-expand-lg navbar-light bg-light box-navbar">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="{% url 'core:processor' %}">PDF Processor</a>
+            <div class="d-flex ms-auto">
+                <div class="theme-switcher ms-2">
+                    <div class="dropdown">
+                        <button class="btn dropdown-toggle" type="button" id="themeDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="bi bi-circle-half"></i>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="themeDropdown">
+                            <li><button class="dropdown-item theme-option" data-theme="light"><i class="bi bi-sun"></i> Light</button></li>
+                            <li><button class="dropdown-item theme-option" data-theme="dark"><i class="bi bi-moon"></i> Dark</button></li>
+                            <li><button class="dropdown-item theme-option" data-theme="system"><i class="bi bi-circle-half"></i> System</button></li>
+                        </ul>
+                    </div>
+                </div>
+                <button id="toggleThemeDebug" class="btn ms-2">
+                    <i class="bi bi-bug"></i>
+                </button>
+            </div>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.resolver_match.url_name == 'processor' %}active{% endif %}" 
+                           href="{% url 'core:processor' %}">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.path == '/columns/' %}active{% endif %}"
+                            href="{% url 'core:columns' %}">Columns</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.path == '/jobs/' %}active{% endif %}"
+                            href="{% url 'core:job_list' %}">Jobs</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.path == '/prompts/' %}active{% endif %}"
+                            href="{% url 'core:prompts' %}">Prompts</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.path == '/generate-case-report/' %}active{% endif %}"
+                            href="{% url 'core:generate_case_report' %}">Case Reports</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.resolver_match.url_name == 'extract_references' %}active{% endif %}"
+                            href="{% url 'core:extract_references' %}">Extract References</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        {% block content %}{% endblock %}
+    </div>
+
+    {% block js %}
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Popper.js -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js" integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+" crossorigin="anonymous"></script>
+    <!-- Job Status Banner JS -->
+    <script src="{% static 'js/job-status-banner.js' %}"></script>
+    <!-- Box UI Theme JS -->
+    <script src="{% static 'js/box-theme.js' %}"></script>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize job status banner with correct endpoint URL
+            const banner = new JobStatusBanner({
+                checkEndpoint: "{% url 'core:check_job_status' %}",
+                pollInterval: 5000
+            });
+            
+            // Debug for CSS and JS loading
+            console.group('CSS and JS Loading Debug');
+            console.log('Bootstrap version:', typeof bootstrap !== 'undefined' ? bootstrap.Tooltip.VERSION : 'Not loaded');
+            console.log('jQuery version:', typeof $ !== 'undefined' ? $.fn.jquery : 'Not loaded');
+            
+            // Log loaded stylesheets
+            console.group('Loaded Stylesheets');
+            const styles = document.querySelectorAll('link[rel="stylesheet"]');
+            styles.forEach(style => {
+                console.log(style.href);
+            });
+            console.groupEnd();
+            
+            // Log CSS variables 
+            console.group('CSS Variables Check');
+            const computed = getComputedStyle(document.documentElement);
+            console.log('--box-primary:', computed.getPropertyValue('--box-primary'));
+            console.log('--box-background:', computed.getPropertyValue('--box-background'));
+            console.log('--box-text:', computed.getPropertyValue('--box-text'));
+            console.log('--box-text-secondary:', computed.getPropertyValue('--box-text-secondary'));
+            console.groupEnd();
+            
+            // Check for theme debug toggle
+            const toggleThemeDebug = document.getElementById('toggleThemeDebug');
+            const debugPanel = document.getElementById('debug-panel');
+            const closeDebugPanel = document.getElementById('closeDebugPanel');
+            
+            if (toggleThemeDebug && debugPanel) {
+                toggleThemeDebug.addEventListener('click', function() {
+                    debugPanel.style.display = debugPanel.style.display === 'none' ? 'block' : 'none';
+                    updateDebugPanel();
+                });
+            }
+            
+            if (closeDebugPanel && debugPanel) {
+                closeDebugPanel.addEventListener('click', function() {
+                    debugPanel.style.display = 'none';
+                });
+            }
+            
+            // Function to update debug panel
+            function updateDebugPanel() {
+                if (!debugPanel || debugPanel.style.display === 'none') return;
+                
+                const currentThemeEl = document.getElementById('currentTheme');
+                const htmlDataThemeEl = document.getElementById('htmlDataTheme');
+                const htmlBsDataThemeEl = document.getElementById('htmlBsDataTheme');
+                const localStorageThemeEl = document.getElementById('localStorageTheme');
+                const systemPreferenceEl = document.getElementById('systemPreference');
+                
+                if (currentThemeEl) {
+                    let currentTheme = localStorage.getItem('pdf-processor-theme');
+                    if (!currentTheme) {
+                        currentTheme = `system (${window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'})`;
+                    }
+                    currentThemeEl.textContent = currentTheme;
+                }
+                
+                if (htmlDataThemeEl) {
+                    htmlDataThemeEl.textContent = document.documentElement.getAttribute('data-theme') || 'not set';
+                }
+                
+                if (htmlBsDataThemeEl) {
+                    htmlBsDataThemeEl.textContent = document.documentElement.getAttribute('data-bs-theme') || 'not set';
+                }
+                
+                if (localStorageThemeEl) {
+                    localStorageThemeEl.textContent = localStorage.getItem('pdf-processor-theme') || 'not set';
+                }
+                
+                if (systemPreferenceEl) {
+                    systemPreferenceEl.textContent = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+                }
+            }
+            
+            console.groupEnd();
+        });
+    </script>
+    {% endblock %}
+    
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

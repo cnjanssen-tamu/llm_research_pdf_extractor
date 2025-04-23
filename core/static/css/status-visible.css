@@ -1,0 +1,87 @@
+/* 
+ * Status Visibility CSS
+ * Ensures the results section is visible on Safari and other browsers
+ */
+
+/* Main visibility class */
+#results-section.visible {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    height: auto !important;
+    overflow: visible !important;
+    pointer-events: auto !important;
+    transform: none !important;
+    -webkit-transform: none !important;
+    z-index: 1000 !important;
+    position: relative !important;
+}
+
+/* Override any Safari-specific hiding */
+@media not all and (min-resolution:.001dpcm) { 
+    @supports (-webkit-appearance:none) and (display:flow-root) {
+        /* Safari-only CSS */
+        #results-section.visible {
+            /* Extra override for Safari */
+            clip-path: none !important;
+            -webkit-clip-path: none !important;
+            mask: none !important;
+            -webkit-mask: none !important;
+        }
+        
+        #results-section.visible * {
+            /* Make all children visible */
+            visibility: visible !important;
+            display: block !important;
+        }
+        
+        /* Specific element fixes */
+        #results-section.visible .progress-bar {
+            display: flex !important;
+        }
+        
+        #results-section.visible .badge {
+            display: inline-block !important;
+        }
+        
+        #results-section.visible .processing-details {
+            display: block !important;
+        }
+    }
+}
+
+/* Ensure clone has same styling */
+#results-section-clone {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    height: auto !important;
+    overflow: visible !important;
+}
+
+/* Special Safari scrollbar issues */
+@media screen and (-webkit-min-device-pixel-ratio:0) {
+    #results-section.visible::-webkit-scrollbar,
+    #results-section-clone::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+    }
+    
+    #results-section.visible::-webkit-scrollbar-track,
+    #results-section-clone::-webkit-scrollbar-track {
+        background: #f1f1f1;
+    }
+    
+    #results-section.visible::-webkit-scrollbar-thumb,
+    #results-section-clone::-webkit-scrollbar-thumb {
+        background: #888;
+        border-radius: 4px;
+    }
+}
+
+/* Apply styles to everything under the container */
+.container > #results-section.visible,
+.container > #results-section-clone {
+    margin-top: 1.5rem !important;
+    margin-bottom: 1.5rem !important;
+} 

@@ -1,0 +1,1685 @@
+<!-- templates/core/job_detail.html -->
+{% extends "base.html" %}
+{% load custom_filters %}
+{% load static %}
+
+{% block content %}
+<div class="container">
+    <div class="row mb-4">
+        <div class="col">
+            <h1>Job Details: {{ job.name }}</h1>
+            <div class="d-flex align-items-center mb-3">
+                <span class="badge {% if job.status == 'completed' %}bg-success{% elif job.status == 'failed' %}bg-danger{% elif 'pending' in job.status %}bg-warning{% else %}bg-primary{% endif %} me-2 p-2">
+                    {{ job.status|title }}
+                </span>
+                <span class="text-muted">Created: {{ job.created_at|date:"M d, Y H:i" }}</span>
+            </div>
+            <p>
+                <a href="{% url 'core:job_list' %}" class="btn btn-outline-secondary btn-sm">
+                    <i class="bi bi-arrow-left"></i> Back to Jobs
+                </a>
+                <a href="{% url 'core:job_results' pk=job.id %}" class="btn btn-outline-primary btn-sm">
+                    <i class="bi bi-table"></i> View Results Table
+                </a>
+                
+                <!-- Add download buttons for completed jobs -->
+                {% if job.status == 'completed' or job.status == 'completed_with_errors' %}
+                <div class="btn-group">
+                    <a href="{% url 'core:download_results' job_id=job.id format='csv' %}" class="btn btn-success btn-sm">
+                        <i class="bi bi-file-earmark-spreadsheet"></i> CSV
+                    </a>
+                    <a href="{% url 'core:download_results' job_id=job.id format='xlsx' %}" class="btn btn-primary btn-sm">
+                        <i class="bi bi-file-earmark-excel"></i> Excel
+                    </a>
+                    <a href="{% url 'core:download_results' job_id=job.id format='json' %}" class="btn btn-secondary btn-sm">
+                        <i class="bi bi-file-earmark-code"></i> JSON
+                    </a>
+                </div>
+                {% endif %}
+            </p>
+        </div>
+    </div>
+    
+    {% if is_truncated %}
+    <div class="alert alert-warning">
+        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+        <strong>Truncated Response:</strong> {{ continuation_message }}
+        
+        {% if docs_needing_continuation %}
+        <div class="mt-2">
+            <button class="btn btn-warning btn-sm" onclick="continueProcessing('{{ continuation_document_id }}')">
+                <i class="bi bi-arrow-clockwise"></i> Continue Processing
+            </button>
+            <div class="small text-muted mt-1">
+                {{ truncated_doc_count }} out of {{ total_documents }} documents need continuation processing.
+            </div>
+        </div>
+        {% endif %}
+    </div>
+    {% endif %}
+    
+    {% if pending_continuation %}
+    <div class="alert alert-info">
+        <i class="bi bi-info-circle-fill me-2"></i>
+        <strong>Continuation in Progress:</strong> {{ continuation_status }}
+        <div class="mt-2">
+            <div class="spinner-border spinner-border-sm text-primary" role="status">
+                <span class="visually-hidden">Processing...</span>
+            </div>
+            <span class="ms-2">Processing... this may take a few minutes.</span>
+        </div>
+    </div>
+    {% endif %}
+    
+    <!-- Documents Section -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h3 class="card-title mb-0">Documents</h3>
+        </div>
+        <div class="card-body">
+            <!-- Job Status Information -->
+            {% if job.status == 'processing' %}
+            <div class="alert alert-info mb-3">
+                <div class="d-flex align-items-center mb-2">
+                    <div class="spinner-border spinner-border-sm text-primary me-2" role="status">
+                        <span class="visually-hidden">Processing...</span>
+                    </div>
+                    <h5 class="mb-0">Processing Status</h5>
+                </div>
+                
+                {% if processing_phase %}
+                <div class="mb-2">
+                    <strong>Phase:</strong> <span class="badge bg-info job-processing-phase">{{ processing_phase|title }}</span>
+                </div>
+                {% endif %}
+                
+                {% if current_document %}
+                <div class="mb-2">
+                    <strong>Current Document:</strong> <span class="job-current-document">{{ current_document }}</span>
+                    {% if current_case %}
+                    <div>
+                        <strong>Current Case:</strong> <span class="job-current-case">{{ current_case }}</span>
+                    </div>
+                    {% else %}
+                    <div style="display: none;">
+                        <strong>Current Case:</strong> <span class="job-current-case"></span>
+                    </div>
+                    {% endif %}
+                </div>
+                {% else %}
+                <div class="mb-2">
+                    <strong>Current Document:</strong> <span class="job-current-document">Initializing...</span>
+                    <div style="display: none;">
+                        <strong>Current Case:</strong> <span class="job-current-case"></span>
+                    </div>
+                </div>
+                {% endif %}
+                
+                {% if processing_details %}
+                <div class="mb-2">
+                    <strong>Details:</strong> <span class="job-processing-details">{{ processing_details }}</span>
+                </div>
+                {% else %}
+                <div class="mb-2" style="display: none;">
+                    <strong>Details:</strong> <span class="job-processing-details"></span>
+                </div>
+                {% endif %}
+                
+                {% if time_since_update %}
+                <div class="text-muted small">
+                    Last updated <span class="job-time-since-update">{{ time_since_update }}</span> seconds ago
+                </div>
+                {% else %}
+                <div class="text-muted small">
+                    Last updated <span class="job-time-since-update">0</span> seconds ago
+                </div>
+                {% endif %}
+                
+                <!-- Error message for job polling failures -->
+                <div id="job-polling-error" class="alert alert-danger mt-3" style="display: none;"></div>
+            </div>
+            {% endif %}
+            
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>File Name</th>
+                            <th>Study Author</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for doc in documents %}
+                        <tr data-bs-toggle="collapse" data-bs-target="#collapseDoc{{ doc.id }}" class="accordion-toggle" style="cursor: pointer;">
+                            <td>{{ forloop.counter }}</td>
+                            <td>{{ doc.filename }}</td>
+                            <td>{{ doc.study_author|default:"Not specified" }}</td>
+                            <td>
+                                <span class="badge {% if doc.status == 'complete' %}bg-success{% elif doc.status == 'error' %}bg-danger{% elif doc.status == 'processed' %}bg-warning{% else %}bg-primary{% endif %}">
+                                    {{ doc.status|title }}
+                                </span>
+                                {% if doc.status == 'processed' %}
+                                <span class="badge bg-info ms-1" title="This document response was truncated">Truncated</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <div class="btn-group btn-group-sm">
+                                    <a href="{{ doc.file.url }}" target="_blank" class="btn btn-outline-primary">
+                                        <i class="bi bi-file-pdf"></i> View PDF
+                                    </a>
+                                    {% if doc.status == 'processed' %}
+                                    <button class="btn btn-outline-warning" onclick="continueProcessing('{{ doc.id }}'); event.stopPropagation();">
+                                        <i class="bi bi-arrow-clockwise"></i> Continue
+                                    </button>
+                                    {% endif %}
+                                    {% if doc.status == 'error' %}
+                                    <button class="btn btn-outline-danger" onclick="rerunDocument('{{ doc.id }}'); event.stopPropagation();">
+                                        <i class="bi bi-arrow-repeat"></i> Rerun
+                                    </button>
+                                    <button class="btn btn-outline-warning" onclick="toggleErrorDetails('error-details-{{ doc.id }}'); event.stopPropagation();">
+                                        <i class="bi bi-exclamation-triangle"></i> View Error
+                                    </button>
+                                    {% endif %}
+                                    <button class="btn btn-outline-info toggle-btn" data-target="#collapseDoc{{ doc.id }}" onclick="event.stopPropagation();">
+                                        <i class="bi bi-chevron-down"></i> 
+                                        <span>
+                                            {% if is_reference_job %}
+                                                Show References
+                                            {% else %}
+                                                Show Cases
+                                            {% endif %}
+                                        </span>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        <!-- Add error details row -->
+                        <tr class="error-details-row" id="error-details-{{ doc.id }}" style="display: none;">
+                            <td colspan="5" class="p-0">
+                                <div class="card-body bg-light border-top border-bottom p-3">
+                                    <h5 class="mb-3 text-danger">Error Details for {{ doc.filename }}</h5>
+                                    {% if doc.error %}
+                                    <div class="alert alert-danger">
+                                        <strong>Error Message:</strong> {{ doc.error }}
+                                    </div>
+                                    {% endif %}
+                                    
+                                    {% get_first_matching_result results doc.id as matching_result %}
+                                    {% if matching_result and matching_result.json_result and 'error' in matching_result.json_result %}
+                                    <div class="alert alert-danger">
+                                        <strong>Processing Error:</strong> {{ matching_result.json_result.error }}
+                                    </div>
+                                    {% endif %}
+                                    
+                                    {% if matching_result and matching_result.raw_result %}
+                                    <div class="mt-3">
+                                        <h6>Raw Gemini Response:</h6>
+                                        <div class="d-flex justify-content-between mb-2">
+                                            <a href="{% url 'core:download_raw_markdown' matching_result.id %}" class="btn btn-sm btn-primary">
+                                                <i class="bi bi-download"></i> Download Raw Text
+                                            </a>
+                                        </div>
+                                        <pre class="bg-light p-3 rounded" style="max-height: 300px; overflow-y: auto; white-space: pre-wrap; font-size: 0.8rem;">{{ matching_result.raw_result }}</pre>
+                                    </div>
+                                    {% endif %}
+                                    
+                                    <div class="mt-3">
+                                        <h6>Troubleshooting Tips:</h6>
+                                        <ul>
+                                            <li>Check that the document is a valid PDF that can be processed.</li>
+                                            <li>The PDF may contain complex formatting that's difficult for the AI to parse.</li>
+                                            <li>Try processing with a different prompt or splitting into multiple documents.</li>
+                                            <li>If you see error code 429, wait a few minutes and try again (rate limiting).</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        <!-- Cases collapsible row -->
+                        <tr>
+                            <td colspan="5" class="p-0">
+                                <div class="collapse" id="collapseDoc{{ doc.id }}">
+                                    <div class="card-body bg-light border-top border-bottom p-3">
+                                        
+                                        {% if is_reference_job %}
+                                        <!-- Reference Preview Section -->
+                                        <h5 class="mb-3">References from {{ doc.filename }}</h5>
+                                        <div class="table-responsive" style="max-height: 400px; overflow-y: auto;">
+                                            <table class="table table-sm table-hover reference-preview-table">
+                                                <thead>
+                                                    <tr>
+                                                        <th>#</th>
+                                                        <th>Citation Text</th>
+                                                        <th>Source Type</th>
+                                                        <th>Year</th>
+                                                        <th>Details</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {% with doc_refs=references_by_doc|get_item:doc.id %}
+                                                        {% for ref in doc_refs %}
+                                                            <tr>
+                                                                <td>{{ ref.reference_index }}</td>
+                                                                <td>{{ ref.citation_text|truncatechars:100 }}</td>
+                                                                <td><span class="badge {% if ref.source_type == 'journal' %}bg-primary{% elif ref.source_type == 'book' %}bg-success{% elif ref.source_type == 'website' %}bg-info{% elif ref.source_type == 'conference' %}bg-warning{% else %}bg-secondary{% endif %}">{{ ref.source_type|title }}</span></td>
+                                                                <td>{{ ref.publication_year|default:"N/A" }}</td>
+                                                                <td>
+                                                                    <button type="button" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#referenceModal{{ ref.id }}">
+                                                                        <i class="bi bi-info-circle"></i>
+                                                                    </button>
+                                                                </td>
+                                                            </tr>
+                                                        {% empty %}
+                                                            <tr>
+                                                                <td colspan="5" class="text-center">No references found for this document.</td>
+                                                            </tr>
+                                                        {% endfor %}
+                                                    {% endwith %}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        {% else %}
+                                        <!-- Case Preview Section -->
+                                        <h5 class="mb-3">Cases from {{ doc.filename }}</h5>
+                                        
+                                        <!-- Add Raw JSON View Button -->
+                                        {% get_first_matching_result results doc.id as matching_result %}
+                                        {% if matching_result and matching_result.raw_result %}
+                                        <div class="mb-3">
+                                            <button class="btn btn-sm btn-outline-secondary" onclick="toggleRawJSON('raw-json-{{ doc.id }}')">
+                                                <i class="bi bi-code-square"></i> Show Raw JSON Response
+                                            </button>
+                                            <div id="raw-json-{{ doc.id }}" class="mt-2" style="display: none;">
+                                                <div class="card">
+                                                    <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                                                        <span>Raw Gemini Response</span>
+                                                        <a href="{% url 'core:download_raw_markdown' matching_result.id %}" class="btn btn-sm btn-outline-primary">
+                                                            <i class="bi bi-download"></i> Download
+                                                        </a>
+                                                    </div>
+                                                    <div class="card-body p-0">
+                                                        <pre class="m-0 p-3 bg-light" style="max-height: 300px; overflow-y: auto; white-space: pre-wrap; font-size: 0.8rem;">{{ matching_result.raw_result }}</pre>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        {% endif %}
+                                        
+                                        <!-- Cases table -->
+                                        <div class="table-responsive" style="max-height: 400px; overflow-y: auto;">
+                                            <table class="table table-sm table-hover case-preview-table">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Case #</th>
+                                                        {% get_first_matching_result results doc.id as matching_result %}
+                                                        {% if matching_result and matching_result.json_result and 'case_results' in matching_result.json_result %}
+                                                            {% with case_results=matching_result.json_result|get_item:'case_results' %}
+                                                                {% if case_results|length > 0 %}
+                                                                    {% with first_case=case_results.0 %}
+                                                                        {% for key, value in first_case.items %}
+                                                                            {% if key != 'case_number' %}
+                                                                                <th>{{ key|title }}</th>
+                                                                            {% endif %}
+                                                                        {% endfor %}
+                                                                    {% endwith %}
+                                                                {% endif %}
+                                                            {% endwith %}
+                                                        {% endif %}
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {% for result in results %}
+                                                        {% if result.document.id == doc.id and result.json_result and 'case_results' in result.json_result %}
+                                                            {% with case_results=result.json_result|get_item:'case_results' %}
+                                                                {% for case in case_results %}
+                                                                    <tr>
+                                                                        <td>{{ case.case_number.value|default:forloop.counter }}</td>
+                                                                        {% for key, value in case.items %}
+                                                                            {% if key != 'case_number' %}
+                                                                                <td>
+                                                                                    {% if value.value %}
+                                                                                        {{ value.value|default:"N/A"|truncatechars:100 }}
+                                                                                    {% else %}
+                                                                                        N/A
+                                                                                    {% endif %}
+                                                                                </td>
+                                                                            {% endif %}
+                                                                        {% endfor %}
+                                                                    </tr>
+                                                                {% empty %}
+                                                                    <tr>
+                                                                        <td colspan="100" class="text-center">No cases found for this document</td>
+                                                                    </tr>
+                                                                {% endfor %}
+                                                            {% endwith %}
+                                                        {% endif %}
+                                                    {% endfor %}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-header">
+            <h3 class="card-title mb-0">Download Results</h3>
+        </div>
+        <div class="card-body">
+            <div class="btn-group">
+                <a href="{% url 'core:download_results' job_id=job.id format='csv' %}"
+                   class="btn btn-success">
+                    <i class="bi bi-file-earmark-spreadsheet"></i> Download CSV
+                </a>
+                <a href="{% url 'core:download_results' job_id=job.id format='excel' %}"
+                   class="btn btn-primary">
+                    <i class="bi bi-file-earmark-excel"></i> Download Excel
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-header">
+            <div class="d-flex justify-content-between align-items-center">
+                <h3 class="card-title mb-0">Response Data</h3>
+                <div class="btn-group" role="group" aria-label="View toggle">
+                    <button class="btn btn-sm btn-outline-secondary active" onclick="toggleView('parsed')" id="parsed-btn">
+                        <i class="bi bi-code-square"></i> Parsed JSON
+                    </button>
+                    <button class="btn btn-sm btn-outline-secondary" onclick="toggleView('raw')" id="raw-btn">
+                        <i class="bi bi-file-text"></i> Raw Response
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="card-body">
+            <div id="parsed-view">
+                <pre><code class="language-json">{{ json_data }}</code></pre>
+            </div>
+            <div id="raw-view" style="display: none;">
+                <pre><code class="language-markdown">{% if results.0.raw_response %}
+                    {{ results.0.raw_response }}
+                {% else %}
+                    {% with found_response=False %}
+                        {% for result in results %}
+                            {% if result.raw_response and not found_response %}
+                                {{ result.raw_response }}
+                                {% with found_response=True %}{% endwith %}
+                            {% endif %}
+                        {% endfor %}
+                    {% endwith %}
+                {% endif %}</code></pre>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add debug info section -->
+    <div class="card mb-4" id="debug-info" style="display: none;">
+        <div class="card-header">
+            <h3 class="card-title mb-0">Debug Information</h3>
+        </div>
+        <div class="card-body">
+            <h5>Prompt Used:</h5>
+            <pre><code class="prompt"></code></pre>
+            <h5>Raw API Response:</h5>
+            <pre><code class="raw-response"></code></pre>
+            <h5>Processed Results:</h5>
+            <pre><code class="results"></code></pre>
+        </div>
+    </div>
+
+    {% for result in results %}
+        {% if result.json_result and 'error' in result.json_result %}
+        <div class="card mb-4">
+            <div class="card-header bg-warning text-dark">
+                <h5 class="card-title mb-0">Processing Error</h5>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-danger">
+                    <strong>Error:</strong> {{ result.json_result.error }}
+                </div>
+                {% if result.raw_response %}
+                <div class="mt-3">
+                    <h6>Raw API Response:</h6>
+                    <div class="d-flex justify-content-between mb-2">
+                        <button class="btn btn-sm btn-outline-secondary" onclick="toggleRawResponse('raw-response-{{ result.id }}')">
+                            Show/Hide Raw Response
+                        </button>
+                        <a href="{% url 'core:download_raw_markdown' result.id %}" class="btn btn-sm btn-primary">
+                            <i class="bi bi-download"></i> Download Raw Text
+                        </a>
+                    </div>
+                    <pre id="raw-response-{{ result.id }}" class="bg-light p-3 rounded" style="max-height: 300px; overflow-y: auto; display: none; white-space: pre-wrap;">{{ result.raw_response }}</pre>
+                </div>
+                {% endif %}
+                
+                <div class="mt-3">
+                    <h6>Troubleshooting Tips:</h6>
+                    <ul>
+                        <li>The JSON response from the model has syntax errors. This can happen if the response is truncated or malformed.</li>
+                        <li>Try processing the document again with a simpler prompt that produces less output.</li>
+                        <li>Consider splitting large documents into smaller parts.</li>
+                        <li>Check the model's response for any error messages or warnings.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    {% endfor %}
+
+    {% if not results %}
+        <p>No results available for this job yet.</p>
+    {% endif %}
+
+    <!-- References Section for Reference Extraction Jobs -->
+    {% if job.job_type == 'reference_extraction' and references %}
+    <div class="card mb-4">
+        <div class="card-header">
+            <h3 class="card-title mb-0">
+                <i class="bi bi-journal-text me-2"></i>
+                Extracted References <span class="badge bg-primary">{{ references|length }}</span>
+            </h3>
+        </div>
+        <div class="card-body">
+            <!-- Filter controls -->
+            <div class="row mb-3">
+                <div class="col-md-4">
+                    <select class="form-select" id="sourceTypeFilter">
+                        <option value="">All Source Types</option>
+                        {% for source_type in source_types %}
+                            <option value="{{ source_type }}">{{ source_type|title }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-8">
+                    <input type="text" class="form-control" id="referenceSearch" placeholder="Search references...">
+                </div>
+            </div>
+
+            <!-- References table -->
+            <div class="table-responsive">
+                <table class="table table-striped table-hover" id="referencesTable">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Source Type</th>
+                            <th>Authors</th>
+                            <th>Title</th>
+                            <th>Source</th>
+                            <th>Year</th>
+                            <th>Details</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for ref in references %}
+                        <tr data-source-type="{{ ref.source_type }}" class="reference-row">
+                            <td>{{ ref.reference_index }}</td>
+                            <td>
+                                <span class="badge {% if ref.source_type == 'journal' %}bg-primary{% elif ref.source_type == 'book' %}bg-success{% elif ref.source_type == 'website' %}bg-info{% elif ref.source_type == 'conference' %}bg-warning{% else %}bg-secondary{% endif %}">
+                                    {{ ref.source_type|title }}
+                                </span>
+                            </td>
+                            <td>
+                                {% if ref.authors %}
+                                    {% if ref.authors|slice:":1" == "[" %}
+                                        <!-- Handle JSON list -->
+                                        {% with authors_json=ref.authors|safe %}
+                                            <script>
+                                                try {
+                                                    document.write(JSON.parse('{{ authors_json|escapejs }}').join(", "));
+                                                } catch(e) {
+                                                    document.write('{{ authors_json|truncatechars:60|escapejs }}');
+                                                }
+                                            </script>
+                                        {% endwith %}
+                                    {% else %}
+                                        {{ ref.authors|truncatechars:60 }}
+                                    {% endif %}
+                                {% else %}
+                                    <em>No authors</em>
+                                {% endif %}
+                            </td>
+                            <td>{{ ref.title|truncatechars:80|default:"N/A" }}</td>
+                            <td>{{ ref.source_name|truncatechars:40|default:"N/A" }}</td>
+                            <td>{{ ref.publication_year|default:"N/A" }}</td>
+                            <td>
+                                <button type="button" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#referenceModal{{ ref.id }}">
+                                    <i class="bi bi-info-circle"></i> Details
+                                </button>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Export options -->
+            <div class="mt-3">
+                <div class="btn-group">
+                    <a href="{% url 'core:download_results' job_id=job.id format='csv' %}" class="btn btn-success">
+                        <i class="bi bi-file-earmark-spreadsheet"></i> Export to CSV
+                    </a>
+                    <a href="{% url 'core:download_results' job_id=job.id format='xlsx' %}" class="btn btn-primary">
+                        <i class="bi bi-file-earmark-excel"></i> Export to Excel
+                    </a>
+                    <a href="{% url 'core:download_results' job_id=job.id format='json' %}" class="btn btn-secondary">
+                        <i class="bi bi-file-earmark-code"></i> Export to JSON
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Reference Detail Modals -->
+    {% for ref in references %}
+    <div class="modal fade" id="referenceModal{{ ref.id }}" tabindex="-1" aria-labelledby="referenceModalLabel{{ ref.id }}" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="referenceModalLabel{{ ref.id }}">Reference Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <h6>Full Citation:</h6>
+                        <div class="p-3 bg-light rounded">{{ ref.citation_text }}</div>
+                    </div>
+                    
+                    <div class="row mb-2">
+                        <div class="col-md-4"><strong>Source Type:</strong></div>
+                        <div class="col-md-8">{{ ref.source_type|title }}</div>
+                    </div>
+                    
+                    <div class="row mb-2">
+                        <div class="col-md-4"><strong>Title:</strong></div>
+                        <div class="col-md-8">{{ ref.title|default:"N/A" }}</div>
+                    </div>
+                    
+                    <div class="row mb-2">
+                        <div class="col-md-4"><strong>Authors:</strong></div>
+                        <div class="col-md-8">
+                            {% if ref.authors %}
+                                {% if ref.authors|slice:":1" == "[" %}
+                                    <!-- Handle JSON list -->
+                                    {% with authors_json=ref.authors|safe %}
+                                        <script>
+                                            try {
+                                                document.write(JSON.parse('{{ authors_json|escapejs }}').join("<br>"));
+                                            } catch(e) {
+                                                document.write('{{ authors_json|escapejs }}');
+                                            }
+                                        </script>
+                                    {% endwith %}
+                                {% else %}
+                                    {{ ref.authors }}
+                                {% endif %}
+                            {% else %}
+                                <em>No authors</em>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-2">
+                        <div class="col-md-4"><strong>Source Name:</strong></div>
+                        <div class="col-md-8">{{ ref.source_name|default:"N/A" }}</div>
+                    </div>
+                    
+                    <div class="row mb-2">
+                        <div class="col-md-4"><strong>Year:</strong></div>
+                        <div class="col-md-8">{{ ref.publication_year|default:"N/A" }}</div>
+                    </div>
+                    
+                    <div class="row mb-2">
+                        <div class="col-md-4"><strong>Volume:</strong></div>
+                        <div class="col-md-8">{{ ref.volume|default:"N/A" }}</div>
+                    </div>
+                    
+                    <div class="row mb-2">
+                        <div class="col-md-4"><strong>Issue:</strong></div>
+                        <div class="col-md-8">{{ ref.issue|default:"N/A" }}</div>
+                    </div>
+                    
+                    <div class="row mb-2">
+                        <div class="col-md-4"><strong>Pages:</strong></div>
+                        <div class="col-md-8">{{ ref.pages|default:"N/A" }}</div>
+                    </div>
+                    
+                    <div class="row mb-2">
+                        <div class="col-md-4"><strong>DOI/URL:</strong></div>
+                        <div class="col-md-8">
+                            {% if ref.doi_or_url %}
+                                {% if 'http' in ref.doi_or_url %}
+                                    <a href="{{ ref.doi_or_url }}" target="_blank">{{ ref.doi_or_url }}</a>
+                                {% elif 'doi:' in ref.doi_or_url %}
+                                    <a href="https://doi.org/{{ ref.doi_or_url|slice:'4:' }}" target="_blank">{{ ref.doi_or_url }}</a>
+                                {% else %}
+                                    {{ ref.doi_or_url }}
+                                {% endif %}
+                            {% else %}
+                                N/A
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-2">
+                        <div class="col-md-4"><strong>Confidence:</strong></div>
+                        <div class="col-md-8">
+                            {% if ref.confidence %}
+                                <div class="progress">
+                                    <div class="progress-bar {% if ref.confidence >= 90 %}bg-success{% elif ref.confidence >= 70 %}bg-info{% elif ref.confidence >= 50 %}bg-warning{% else %}bg-danger{% endif %}" 
+                                         role="progressbar" 
+                                         style="width: {{ ref.confidence }}%;" 
+                                         aria-valuenow="{{ ref.confidence }}" 
+                                         aria-valuemin="0" 
+                                         aria-valuemax="100">
+                                        {{ ref.confidence }}%
+                                    </div>
+                                </div>
+                            {% else %}
+                                N/A
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-2">
+                        <div class="col-md-4"><strong>Document:</strong></div>
+                        <div class="col-md-8">
+                            <a href="{{ ref.document.file.url }}" target="_blank">{{ ref.document.filename }}</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+    {% endif %}
+
+    <!-- Case Extraction Section for Case Extraction Jobs -->
+    {% if not is_reference_job and results %}
+    <div class="card mb-4">
+        <div class="card-header">
+            <h3 class="card-title mb-0">
+                <i class="bi bi-journals me-2"></i>
+                Extracted Cases <span class="badge bg-primary">{{ total_case_count }}</span>
+            </h3>
+        </div>
+        <div class="card-body">
+            <!-- Filter controls -->
+            <div class="row mb-3">
+                <div class="col-md-4">
+                    <select class="form-select" id="caseDocumentFilter">
+                        <option value="">All Documents</option>
+                        {% for doc in documents %}
+                            <option value="{{ doc.id }}">{{ doc.filename }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-8">
+                    <input type="text" class="form-control" id="caseSearch" placeholder="Search cases...">
+                </div>
+            </div>
+
+            <!-- Cases table -->
+            <div class="table-responsive" id="casesTableContainer">
+                <table class="table table-striped table-hover" id="casesTable">
+                    <thead>
+                        <tr>
+                            <th>Case #</th>
+                            <th>Document</th>
+                            <th>Case Name</th>
+                            <th>Court</th>
+                            <th>Date</th>
+                            <th>Details</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for result in results %}
+                            {% if result.json_result and 'case_results' in result.json_result %}
+                                {% with case_results=result.json_result|get_item:'case_results' %}
+                                    {% for case in case_results %}
+                                    <tr data-document-id="{{ result.document.id }}" class="case-row">
+                                        <td>{{ case.case_number.value|default:forloop.counter }}</td>
+                                        <td>{{ result.document.filename|truncatechars:30 }}</td>
+                                        <td>
+                                            {% if case|get_item:'case_name' and case|get_item:'case_name'|get_item:'value' %}
+                                                {{ case|get_item:'case_name'|get_item:'value'|truncatechars:60 }}
+                                            {% else %}
+                                                <em>N/A</em>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if case|get_item:'court' and case|get_item:'court'|get_item:'value' %}
+                                                {{ case|get_item:'court'|get_item:'value'|truncatechars:40 }}
+                                            {% else %}
+                                                <em>N/A</em>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if case|get_item:'date' and case|get_item:'date'|get_item:'value' %}
+                                                {{ case|get_item:'date'|get_item:'value' }}
+                                            {% else %}
+                                                <em>N/A</em>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            <button type="button" class="btn btn-sm btn-outline-primary case-details-btn" 
+                                                    data-document-id="{{ result.document.id }}" 
+                                                    data-case-index="{{ forloop.counter0 }}">
+                                                <i class="bi bi-info-circle"></i> Details
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                {% endwith %}
+                            {% endif %}
+                        {% empty %}
+                            <tr>
+                                <td colspan="6" class="text-center">No cases found for this job.</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Export options -->
+            <div class="mt-3">
+                <div class="btn-group">
+                    <a href="{% url 'core:download_results' job_id=job.id format='csv' %}" class="btn btn-success">
+                        <i class="bi bi-file-earmark-spreadsheet"></i> Export to CSV
+                    </a>
+                    <a href="{% url 'core:download_results' job_id=job.id format='xlsx' %}" class="btn btn-primary">
+                        <i class="bi bi-file-earmark-excel"></i> Export to Excel
+                    </a>
+                    <a href="{% url 'core:download_results' job_id=job.id format='json' %}" class="btn btn-secondary">
+                        <i class="bi bi-file-earmark-code"></i> Export to JSON
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Case Detail Modals -->
+    {% if not is_reference_job and results %}
+    <div id="caseDetailModals">
+        <!-- We'll generate these modals dynamically with JavaScript -->
+        <div class="modal fade" id="caseDetailModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Case Details</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body" id="caseDetailContent">
+                        <!-- Content will be populated by JavaScript -->
+                        <div class="text-center">
+                            <div class="spinner-border text-primary" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .table-container {
+        max-height: 400px;
+        overflow-y: auto;
+    }
+    
+    .table-responsive {
+        margin: 0;
+        padding: 0;
+        max-width: 100%;
+        overflow-x: auto;
+    }
+    
+    .table {
+        margin-bottom: 0;
+    }
+    
+    .table thead th {
+        position: sticky;
+        top: 0;
+        background-color: #e9ecef;
+        z-index: 1;
+    }
+    
+    .case-preview-table {
+        font-size: 0.9rem;
+        width: 100%;
+    }
+    
+    .case-preview-table th {
+        white-space: nowrap;
+        min-width: 100px;
+    }
+    
+    .case-preview-table td {
+        white-space: normal;
+        min-width: 100px;
+        max-width: 250px;
+    }
+    
+    .progress {
+        height: 25px;
+    }
+
+    .copy-btn {
+        position: absolute;
+        right: 1rem;
+        top: 1rem;
+    }
+
+    pre {
+        position: relative;
+        padding-top: 2.5rem;
+    }
+
+    #parsed-view,
+    #raw-view {
+        transition: opacity 0.3s ease-in-out;
+    }
+
+    .btn-group .btn.active {
+        background-color: #6c757d;
+        color: white;
+    }
+
+    pre code {
+        white-space: pre-wrap;
+        word-wrap: break-word;
+    }
+    
+    /* Collapsible document case styles */
+    .accordion-toggle:hover {
+        background-color: rgba(0,0,0,0.03);
+    }
+    
+    .collapse.show {
+        transition: all 0.3s ease;
+    }
+    
+    /* Add a subtle indicator that the row is clickable */
+    .accordion-toggle td:first-child {
+        position: relative;
+    }
+    
+    .accordion-toggle td:first-child::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 3px;
+        background-color: #6c757d;
+        opacity: 0.5;
+    }
+    
+    .accordion-toggle:hover td:first-child::before {
+        background-color: #0d6efd;
+        opacity: 1;
+    }
+    
+    /* Dark mode styles */
+    @media (prefers-color-scheme: dark) {
+        /* Card and general background colors */
+        .card, 
+        .card-header, 
+        .card-body,
+        .alert:not(.alert-danger):not(.alert-warning):not(.alert-success):not(.alert-info) {
+            background-color: #2b3035 !important;
+            color: #e9ecef !important;
+            border-color: #444a50 !important;
+        }
+        
+        /* Raw JSON and code blocks - ensure contrast */
+        pre, 
+        .bg-light, 
+        .card-body.bg-light {
+            background-color: #212529 !important;
+            color: #e9ecef !important;
+            border-color: #444a50 !important;
+        }
+        
+        /* Ensure table headers are readable */
+        .table thead th {
+            background-color: #343a40 !important;
+            color: #e9ecef !important;
+            border-color: #444a50 !important;
+        }
+        
+        /* Table cells in dark mode */
+        .table td,
+        .table-striped tbody tr:nth-of-type(odd) {
+            background-color: #2b3035 !important;
+            color: #e9ecef !important;
+            border-color: #444a50 !important;
+        }
+        
+        .table-striped tbody tr:nth-of-type(even) {
+            background-color: #343a40 !important;
+            color: #e9ecef !important;
+        }
+        
+        /* Hover states */
+        .accordion-toggle:hover {
+            background-color: rgba(255,255,255,0.05) !important;
+        }
+        
+        /* Error details and collapsed sections */
+        .error-details-row .card-body,
+        .collapse .card-body {
+            background-color: #2b3035 !important;
+            border-color: #444a50 !important;
+        }
+        
+        /* Badge and button text contrast fix */
+        .badge {
+            color: #fff !important;
+        }
+        
+        /* Button outlines */
+        .btn-outline-secondary,
+        .btn-outline-primary,
+        .btn-outline-info,
+        .btn-outline-warning,
+        .btn-outline-danger {
+            color: #e9ecef !important;
+        }
+        
+        .btn-outline-secondary:hover,
+        .btn-outline-primary:hover,
+        .btn-outline-info:hover,
+        .btn-outline-warning:hover,
+        .btn-outline-danger:hover {
+            color: #212529 !important;
+        }
+        
+        /* Button styling */
+        .btn-group .btn.active {
+            background-color: #495057 !important;
+            color: #e9ecef !important;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block extra_js %}
+{{ block.super }}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="{% static 'js/initialize-progress.js' %}"></script>
+<script src="{% static 'js/job-progress.js' %}"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log("Job Detail DOM Loaded."); // Basic check
+
+        // Toggle raw JSON view
+        window.toggleRawJSON = function(id) {
+            $('#' + id).toggle();
+        }
+        
+        // Toggle error details
+        window.toggleErrorDetails = function(id) {
+            $('#' + id).toggle();
+        }
+        
+        // References filtering
+        {% if job.job_type == 'reference_extraction' and references %}
+        // Filter by source type
+        $('#sourceTypeFilter').on('change', function() {
+            let selectedSourceType = $(this).val();
+            
+            if (selectedSourceType === '') {
+                $('.reference-row').show();
+            } else {
+                $('.reference-row').hide();
+                $('.reference-row[data-source-type="' + selectedSourceType + '"]').show();
+            }
+        });
+        
+        // Search in references
+        $('#referenceSearch').on('keyup', function() {
+            let searchTerm = $(this).val().toLowerCase();
+            
+            $('.reference-row').each(function() {
+                let rowText = $(this).text().toLowerCase();
+                if (rowText.includes(searchTerm)) {
+                    $(this).show();
+                } else {
+                    $(this).hide();
+                }
+            });
+        });
+        {% endif %}
+        
+        // Cases filtering and modal handlers
+        {% if not is_reference_job and results %}
+        // Filter by document
+        $('#caseDocumentFilter').on('change', function() {
+            let selectedDocId = $(this).val();
+            
+            if (selectedDocId === '') {
+                $('.case-row').show();
+            } else {
+                $('.case-row').hide();
+                $('.case-row[data-document-id="' + selectedDocId + '"]').show();
+            }
+        });
+        
+        // Search in cases
+        $('#caseSearch').on('keyup', function() {
+            let searchTerm = $(this).val().toLowerCase();
+            
+            $('.case-row').each(function() {
+                let rowText = $(this).text().toLowerCase();
+                if (rowText.includes(searchTerm)) {
+                    $(this).show();
+                } else {
+                    $(this).hide();
+                }
+            });
+        });
+        
+        // Handle case details modal display
+        $('.case-details-btn').on('click', function() {
+            const documentId = $(this).data('document-id');
+            const caseIndex = $(this).data('case-index');
+            console.log(`Opening case details modal for document: ${documentId}, case: ${caseIndex}`);
+            
+            // Show the modal with loading indicator
+            const caseModal = new bootstrap.Modal(document.getElementById('caseDetailModal'));
+            caseModal.show();
+            
+            // Find the matching result and case
+            let modalContent = '<div class="alert alert-warning">Case details not found</div>';
+            
+            // Search through all results to find the matching document and case
+            {% for result in results %}
+            if ("{{ result.document.id }}" === documentId) {
+                {% if result.json_result %}
+                    {% with case_results=result.json_result|get_item:'case_results' %}
+                        {% if case_results %}
+                        try {
+                            // Fetch the specific case by index
+                            const caseData = {{ case_results|safe }}[caseIndex];
+                            
+                            if (caseData) {
+                                // Build a nicely formatted display of all case properties
+                                modalContent = '<div class="container-fluid">';
+                                
+                                // Add document info
+                                modalContent += `
+                                    <div class="row mb-3">
+                                        <div class="col-12">
+                                            <div class="alert alert-info">
+                                                <strong>Document:</strong> {{ result.document.filename }}
+                                            </div>
+                                        </div>
+                                    </div>`;
+                                
+                                // Add each case field
+                                for (const [key, value] of Object.entries(caseData)) {
+                                    if (value && typeof value === 'object' && 'value' in value) {
+                                        const fieldName = key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+                                        const fieldValue = value.value || 'N/A';
+                                        
+                                        modalContent += `
+                                            <div class="row mb-2">
+                                                <div class="col-md-4"><strong>${fieldName}:</strong></div>
+                                                <div class="col-md-8">${fieldValue}</div>
+                                            </div>`;
+                                    }
+                                }
+                                
+                                modalContent += '</div>';
+                            }
+                        } catch (e) {
+                            console.error("Error handling case data:", e);
+                            modalContent = '<div class="alert alert-danger">Error loading case details: ' + e.message + '</div>';
+                        }
+                        {% endif %}
+                    {% endwith %}
+                {% endif %}
+            }
+            {% endfor %}
+            
+            // Set the modal content
+            $('#caseDetailContent').html(modalContent);
+        });
+        {% endif %}
+
+        const jobStatus = '{{ job.status }}';
+        const jobId = '{{ job.id }}';
+        console.log(`Initial Job State - ID: ${jobId}, Status: ${jobStatus}`);
+
+        // Determine if polling is needed based on the initial status
+        const requiresPolling = ['processing', 'pending', 'pending_continuation', 'pending_continuation_with_errors'].includes(jobStatus);
+        console.log("Requires Polling?", requiresPolling);
+
+        // --- Initialize for active/in-progress jobs ---
+        if (requiresPolling && jobId) {
+            console.log("Attempting to initialize JobProgress...");
+            // Ensure JobProgress class is available
+            if (typeof JobProgress !== 'undefined') {
+                let jobProgress = new JobProgress({
+                    jobId: jobId,
+                    jobStatusUrl: '{% url "core:check_job_status" %}',
+                    pollInterval: 3000,
+                    onComplete: function(finalStatusData) {
+                        console.log(`Polling complete for job ${jobId}. Final status: ${finalStatusData.status}.`);
+                        console.log("JobProgress:onComplete: Updating UI with final state:", finalStatusData);
+                        
+                        // 1. Hide the processing status alert
+                        const processingAlert = document.querySelector('.alert.alert-info.mb-3');
+                        if (processingAlert) {
+                            processingAlert.style.display = 'none';
+                            console.log("Processing alert hidden.");
+                        }
+                        
+                        // 2. Update the main status badge
+                        const statusBadge = document.querySelector('.badge.me-2.p-2');
+                        if (statusBadge) {
+                            // Set appropriate class based on final status
+                            let badgeClass = 'badge me-2 p-2 ';
+                            let statusText = finalStatusData.status.charAt(0).toUpperCase() + 
+                                            finalStatusData.status.slice(1).replace(/_/g, ' ');
+                            
+                            if (finalStatusData.status === 'completed') {
+                                badgeClass += 'bg-success';
+                            } else if (finalStatusData.status === 'failed') {
+                                badgeClass += 'bg-danger';
+                            } else if (finalStatusData.status === 'completed_with_errors' || 
+                                      finalStatusData.status.includes('pending_continuation')) {
+                                badgeClass += 'bg-warning';
+                            } else {
+                                badgeClass += 'bg-secondary';
+                            }
+                            
+                            statusBadge.className = badgeClass;
+                            statusBadge.textContent = statusText;
+                            console.log(`Status badge updated: class=${badgeClass}, text=${statusText}`);
+                        } else {
+                            console.warn("Status badge element not found for final update.");
+                        }
+                        
+                        // 3. Show a completion message
+                        const cardBody = document.querySelector('.card-body');
+                        if (cardBody) {
+                            const completionMessage = document.createElement('div');
+                            completionMessage.classList.add(
+                                'alert', 
+                                finalStatusData.status.includes('error') || 
+                                finalStatusData.status === 'failed' ? 
+                                'alert-danger' : 'alert-success',
+                                'mb-3'
+                            );
+                            completionMessage.setAttribute('role', 'alert');
+                            
+                            let messageText = `<strong>Job Processing Complete:</strong> ${finalStatusData.status.replace(/_/g, ' ')}.`;
+                            if (finalStatusData.error) {
+                                messageText += `<br>Error: ${finalStatusData.error}`;
+                            }
+                            
+                            completionMessage.innerHTML = messageText;
+                            cardBody.insertBefore(completionMessage, cardBody.firstChild);
+                            console.log("Completion message added:", messageText);
+                        } else {
+                            console.warn("Card body not found for adding completion message.");
+                        }
+                        
+                        // 4. Enable download buttons
+                        if (finalStatusData.status === 'completed' || 
+                            finalStatusData.status === 'completed_with_errors') {
+                            
+                            // Create download buttons if they don't exist
+                            const buttonGroup = document.createElement('div');
+                            buttonGroup.classList.add('btn-group', 'mb-3');
+                            buttonGroup.id = 'download-buttons';
+                            buttonGroup.innerHTML = `
+                                <a href="{% url 'core:download_results' job_id=job.id format='csv' %}" class="btn btn-success btn-sm">
+                                    <i class="bi bi-file-earmark-spreadsheet"></i> CSV
+                                </a>
+                                <a href="{% url 'core:download_results' job_id=job.id format='xlsx' %}" class="btn btn-primary btn-sm">
+                                    <i class="bi bi-file-earmark-excel"></i> Excel
+                                </a>
+                                <a href="{% url 'core:download_results' job_id=job.id format='json' %}" class="btn btn-secondary btn-sm">
+                                    <i class="bi bi-file-earmark-code"></i> JSON
+                                </a>
+                            `;
+                            
+                            // Find existing button group or add new one
+                            const existingButtonGroup = document.querySelector('.btn-group');
+                            if (existingButtonGroup) {
+                                console.log("Found existing button group, enabling all buttons.");
+                                // Enable all buttons in existing group
+                                const buttons = existingButtonGroup.querySelectorAll('a.btn');
+                                buttons.forEach(btn => {
+                                    btn.classList.remove('disabled');
+                                    btn.removeAttribute('aria-disabled');
+                                    console.log("Enabled button:", btn.textContent.trim());
+                                });
+                            } else {
+                                console.log("No existing button group found, creating new one.");
+                                // Insert the new button group after the back/view buttons
+                                const viewResultsButton = document.querySelector('a[href*="job_results"]');
+                                if (viewResultsButton) {
+                                    const parentElement = viewResultsButton.parentElement;
+                                    parentElement.appendChild(buttonGroup);
+                                    console.log("Added new download buttons.");
+                                } else {
+                                    console.warn("View results button not found, couldn't append download buttons.");
+                                }
+                            }
+                        }
+                        
+                        // 5. Refresh the document list if needed
+                        console.log("Refreshing document list...");
+                        refreshDocumentList(finalStatusData.id);
+                    },
+                    onError: function(error) {
+                        console.error("JobProgress polling failed:", error);
+                        
+                        // Display an error message to the user
+                        const errorContainer = document.getElementById('job-polling-error');
+                        if (errorContainer) {
+                            errorContainer.textContent = "Failed to get job status updates: " + 
+                                                      (error.message || "Unknown error") + 
+                                                      ". Please refresh the page.";
+                            errorContainer.style.display = 'block';
+                            console.log("Error message displayed to user.");
+                        } else {
+                            console.warn("Error container element not found, couldn't display error message.");
+                        }
+                    }
+                });
+                
+                console.log("JobProgress instance created, starting tracking...");
+                
+                // Function to refresh the document list via AJAX
+                function refreshDocumentList(jobId) {
+                    // Create a temporary form and submit it to get just the document table
+                    console.log(`Refreshing document list for job ${jobId} via AJAX...`);
+                    const formData = new FormData();
+                    formData.append('job_id', jobId);
+                    formData.append('action', 'refresh_documents');
+                    formData.append('csrfmiddlewaretoken', getCookie('csrftoken'));
+                    
+                    fetch(window.location.href, {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest'
+                        }
+                    })
+                    .then(response => {
+                        console.log(`Document list refresh response received: status=${response.status}`);
+                        return response.text();
+                    })
+                    .then(html => {
+                        // Try to extract just the table part
+                        console.log("Parsing response HTML...");
+                        const parser = new DOMParser();
+                        const doc = parser.parseFromString(html, 'text/html');
+                        const newTable = doc.querySelector('.table-responsive');
+                        
+                        if (newTable) {
+                            // Replace the current table with the updated one
+                            const currentTable = document.querySelector('.table-responsive');
+                            if (currentTable) {
+                                currentTable.innerHTML = newTable.innerHTML;
+                                console.log("Table content updated successfully.");
+                                
+                                // Reattach event handlers to new elements
+                                attachTableEventHandlers();
+                            } else {
+                                console.warn("Current table element not found for replacement.");
+                            }
+                        } else {
+                            console.warn("New table content not found in AJAX response.");
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error refreshing document list:', error);
+                    });
+                }
+                
+                // Function to attach event handlers to table elements
+                function attachTableEventHandlers() {
+                    console.log("Attaching table event handlers...");
+                    // Reattach toggle functionality for accordion rows
+                    document.querySelectorAll('.accordion-toggle').forEach(row => {
+                        row.addEventListener('click', function() {
+                            const targetId = this.getAttribute('data-bs-target');
+                            const target = document.querySelector(targetId);
+                            if (target) {
+                                target.classList.toggle('show');
+                                console.log(`Toggled collapse for ${targetId}`);
+                            } else {
+                                console.warn(`Target element ${targetId} not found.`);
+                            }
+                        });
+                    });
+                    
+                    // Prevent event propagation for buttons inside rows
+                    document.querySelectorAll('.btn-group .btn').forEach(button => {
+                        button.addEventListener('click', function(e) {
+                            e.stopPropagation();
+                        });
+                    });
+                    console.log("Table event handlers attached.");
+                }
+                
+                // Start tracking immediately
+                jobProgress.startTracking();
+                
+                // Cleanup when leaving the page
+                window.addEventListener('beforeunload', function() {
+                    console.log("Page unloading, stopping job tracking...");
+                    jobProgress.stopTracking();
+                });
+            } else {
+                console.error("JobProgress class is not defined! Check if job-progress.js is loaded correctly.");
+            }
+        }
+        // --- Initialize for inactive/completed jobs ---
+        else {
+            console.log("Job does not require polling. Setting up static display.");
+            // Initialize progress display with initial data
+            if (typeof initializeProgressDisplay === 'function') {
+                console.log("Calling initializeProgressDisplay...");
+                initializeProgressDisplay();
+                
+                // Update display if we have job data
+                updateDisplayFromJobData();
+            } else {
+                console.log("initializeProgressDisplay function not defined, skipping.");
+            }
+            
+            // For non-active jobs, make sure the 'time since update' display shows a static value
+            const timeSinceUpdateEl = document.querySelector('.job-time-since-update');
+            if (timeSinceUpdateEl) {
+                // Calculate time since last update from the initial load timestamp
+                const lastUpdatedTimestamp = '{{ job.updated_at.isoformat|default_if_none:"" }}';
+                console.log(`Static Timer Update: Last updated timestamp from backend: ${lastUpdatedTimestamp}`);
+                
+                if (lastUpdatedTimestamp) {
+                    try {
+                        const lastUpdateDate = new Date(lastUpdatedTimestamp);
+                        // Check if date is valid
+                        if (!isNaN(lastUpdateDate.getTime())) {
+                            const secondsAgo = Math.max(0, Math.floor((new Date() - lastUpdateDate) / 1000));
+                            timeSinceUpdateEl.textContent = secondsAgo;
+                            console.log(`Static Timer Update: Displaying ${secondsAgo} seconds ago.`);
+                        } else {
+                            console.warn("Static Timer Update: Invalid date parsed from backend timestamp.");
+                            timeSinceUpdateEl.textContent = 'N/A';
+                        }
+                    } catch (e) {
+                        console.error("Static Timer Update: Error processing timestamp:", e);
+                        timeSinceUpdateEl.textContent = 'N/A';
+                    }
+                } else {
+                    console.log("Static Timer Update: No backend timestamp available.");
+                    timeSinceUpdateEl.textContent = 'N/A';
+                    const parentContainer = timeSinceUpdateEl.closest('div.text-muted');
+                    if(parentContainer) parentContainer.style.display = 'none';
+                }
+            } else {
+                console.warn("Element '.job-time-since-update' not found for timer.");
+            }
+        }
+        
+        // Function to update display from job data
+        function updateDisplayFromJobData() {
+            console.log("Updating display from job data...");
+            const jobStatus = '{{ job.status }}';
+            const processedCount = {{ processed_count|default:0 }};
+            const totalCount = {{ total_count|default:0 }};
+            const caseCount = {{ total_case_count|default:0 }};
+            
+            // Update progress bar
+            const progressBar = document.querySelector('.progress-bar');
+            if (progressBar && totalCount > 0) {
+                const progress = Math.round((processedCount / totalCount) * 100);
+                progressBar.style.width = `${progress}%`;
+                progressBar.setAttribute('aria-valuenow', progress);
+                console.log(`Progress bar updated: ${progress}%`);
+            } else if (!progressBar) {
+                console.warn("Progress bar element not found.");
+            }
+            
+            // Update counters
+            const processedCountEl = document.getElementById('processed-count');
+            const totalCountEl = document.getElementById('total-count');
+            const caseCountEl = document.getElementById('case-count');
+            const caseCounterEl = document.getElementById('case-counter');
+            
+            if (processedCountEl) {
+                processedCountEl.textContent = processedCount;
+                console.log(`Processed count updated: ${processedCount}`);
+            }
+            if (totalCountEl) {
+                totalCountEl.textContent = totalCount;
+                console.log(`Total count updated: ${totalCount}`);
+            }
+            
+            if (caseCountEl && caseCounterEl && caseCount > 0) {
+                caseCountEl.textContent = caseCount;
+                caseCounterEl.style.display = 'block';
+                console.log(`Case count updated: ${caseCount}`);
+            }
+            
+            // Update status badge
+            const statusBadge = document.getElementById('processing-status-badge');
+            if (statusBadge) {
+                const statusText = jobStatus.charAt(0).toUpperCase() + jobStatus.slice(1).replace(/_/g, ' ');
+                statusBadge.textContent = statusText;
+                
+                // Set appropriate class
+                let badgeClass = 'bg-secondary';
+                switch (jobStatus) {
+                    case 'in_progress':
+                    case 'processing':
+                        badgeClass = 'bg-primary';
+                        break;
+                    case 'completed':
+                        badgeClass = 'bg-success';
+                        break;
+                    case 'error':
+                    case 'failed':
+                        badgeClass = 'bg-danger';
+                        break;
+                    case 'pending':
+                    case 'pending_continuation':
+                    case 'pending_continuation_with_errors':
+                        badgeClass = 'bg-warning';
+                        break;
+                    case 'completed_with_errors':
+                        badgeClass = 'bg-warning';
+                        break;
+                }
+                statusBadge.className = `badge ${badgeClass} me-2 p-2`;
+                console.log(`Status badge updated: class=${badgeClass}, text=${statusText}`);
+            } else {
+                console.warn("Status badge element not found.");
+            }
+            
+            // Update phase indicators
+            if (typeof updatePhaseIndicators === 'function') {
+                console.log("Calling updatePhaseIndicators...");
+                updatePhaseIndicators('{{ current_phase|default:"" }}');
+            }
+            
+            // Show processing details if available
+            const processingDetails = document.querySelector('.job-processing-details');
+            if (processingDetails && '{{ job.processing_details|escapejs }}') {
+                processingDetails.textContent = '{{ job.processing_details|escapejs }}';
+                
+                // Show parent container if hidden
+                const parentContainer = processingDetails.closest('div.mb-2');
+                if (parentContainer) {
+                    parentContainer.style.display = '';
+                    console.log("Processing details shown.");
+                }
+            } else if (!processingDetails) {
+                console.warn("Processing details element not found.");
+            }
+            console.log("Display update completed.");
+        }
+
+        // Get CSRF token from cookies
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+    });
+
+    // Function to continue processing for truncated documents
+    function continueProcessing(documentId) {
+        console.log(`Continuing processing for document ${documentId}...`);
+        fetch('', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCookie('csrftoken')
+            },
+            body: JSON.stringify({
+                action: 'continue_processing',
+                document_id: documentId
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log(`Continue processing response:`, data);
+            if (data.success) {
+                alert(data.message);
+                // Start checking for job completion
+                console.log("Reloading page to track continued processing...");
+                window.location.reload();
+            } else {
+                console.error(`Continue processing error:`, data.error);
+                alert(data.error || 'An error occurred');
+            }
+        })
+        .catch(error => {
+            console.error('Error in continue processing:', error);
+            alert('An error occurred. Please try again.');
+        });
+    }
+
+    // Get CSRF token from cookies
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    // Function to rerun document processing
+    function rerunDocument(documentId) {
+        if (confirm('Are you sure you want to rerun processing for this document?')) {
+            console.log(`Rerunning document ${documentId}...`);
+            fetch('', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCookie('csrftoken')
+                },
+                body: JSON.stringify({
+                    action: 'rerun_document',
+                    document_id: documentId
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log(`Rerun document response:`, data);
+                if (data.success) {
+                    alert(data.message);
+                    // Start checking for job completion
+                    console.log("Reloading page to track rerun processing...");
+                    window.location.reload();
+                } else {
+                    console.error(`Rerun document error:`, data.error);
+                    alert(data.error || 'An error occurred');
+                }
+            })
+            .catch(error => {
+                console.error('Error in rerun document:', error);
+                alert('An error occurred. Please try again.');
+            });
+        }
+    }
+
+    // Function to continue processing a document
+    function continueProcessing(documentId) {
+        if (confirm('Are you sure you want to continue processing this document?')) {
+            console.log(`Continuing processing for document ${documentId}...`);
+            fetch('/continue-processing/' + documentId + '/', {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': getCookie('csrftoken')
+                }
+            })
+            .then(response => {
+                if (response.ok) {
+                    alert('Document processing continuation started.');
+                    window.location.reload();
+                } else {
+                    return response.json().then(data => {
+                        throw new Error(data.error || 'Failed to continue processing');
+                    });
+                }
+            })
+            .catch(error => {
+                console.error('Error in continue processing:', error);
+                alert(error.message || 'An error occurred. Please try again.');
+            });
+        }
+    }
+</script>
+{% endblock %}

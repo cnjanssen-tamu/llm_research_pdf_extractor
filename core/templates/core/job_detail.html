@@ -1,0 +1,77 @@
+{% load custom_filters %}
+
+{% if documents %}
+<div class="card mt-4">
+    <div class="card-header bg-light">
+        <h5 class="mb-0">Documents</h5>
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-striped table-hover mb-0">
+                <thead>
+                    <tr>
+                        <th>Filename</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for document in documents %}
+                    <tr>
+                        <td>{{ document.filename }}</td>
+                        <td>
+                            {% if docs_status and document.id in docs_status %}
+                                {% if docs_status|get_item:document.id == 'complete' %}
+                                    <span class="badge bg-success">Complete</span>
+                                {% elif docs_status|get_item:document.id == 'processing' %}
+                                    <span class="badge bg-info">Processing</span>
+                                {% elif docs_status|get_item:document.id == 'incomplete' %}
+                                    <span class="badge bg-warning">Incomplete</span>
+                                {% else %}
+                                    <span class="badge bg-secondary">{{ docs_status|get_item:document.id }}</span>
+                                {% endif %}
+                            {% else %}
+                                <span class="badge bg-secondary">Unknown</span>
+                            {% endif %}
+                        </td>
+                        <td class="d-flex">
+                            <!-- Removed link to non-existent document_detail view -->
+                            {% if docs_status and document.id in docs_status and docs_status|get_item:document.id == 'incomplete' %}
+                            <form method="post" action="{% url 'core:continue_processing' document.id %}">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-sm btn-warning">
+                                    <i class="fas fa-sync-alt"></i> Continue Processing
+                                </button>
+                            </form>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% else %}
+<div class="alert alert-info mt-4">
+    No documents found for this job.
+</div>
+{% endif %}
+
+<script>
+if (requiresPolling && jobId) {
+    console.log("Attempting to initialize JobProgress...");
+    // Ensure JobProgress class is available
+    if (typeof JobProgress !== 'undefined') {
+        let jobProgress = new JobProgress({
+            jobId: jobId,
+            jobStatusUrl: '{% url "core:check_job_status" %}',
+            pollInterval: 3000,
+            onComplete: function(finalStatusData) {
+                console.log(`Polling complete for job ${jobId}. Final status: ${finalStatusData.status}.`);
+                console.log("JobProgress:onComplete: Updating UI with final state:", finalStatusData);
+            }
+        });
+    }
+}
+</script> 

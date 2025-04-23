@@ -1,0 +1,289 @@
+/* 
+ * Job Status Banner CSS
+ * Creates a fixed position banner to show active job status
+ */
+
+/* Main banner container */
+.job-status-banner {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 320px;
+    max-width: 90vw;
+    z-index: 1050;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    border-radius: 8px;
+    overflow: hidden;
+    background-color: #fff;
+    opacity: 0;
+    transform: translateY(150%);
+    border: 1px solid #e9ecef;
+    pointer-events: none;
+}
+
+/* Active state */
+.job-status-banner.active {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+}
+
+/* Banner header */
+.job-status-banner .banner-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 15px;
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #e9ecef;
+    cursor: move;
+}
+
+/* Banner title */
+.job-status-banner .banner-title {
+    font-size: 16px;
+    font-weight: 600;
+    margin: 0;
+    display: flex;
+    align-items: center;
+}
+
+.job-status-banner .banner-title i {
+    margin-right: 8px;
+}
+
+/* Banner body */
+.job-status-banner .banner-body {
+    padding: 15px;
+}
+
+/* Status badge */
+.job-status-banner .status-badge {
+    display: inline-block;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 500;
+    color: #fff;
+}
+
+/* Progress indicator */
+.job-status-banner .progress {
+    margin: 15px 0;
+    height: 8px;
+    border-radius: 4px;
+    overflow: hidden;
+    background-color: #e9ecef;
+}
+
+.job-status-banner .progress-bar {
+    background-color: #0d6efd;
+    transition: width 0.3s ease;
+}
+
+.job-status-banner.status-completed .progress-bar {
+    background-color: #198754;
+}
+
+.job-status-banner.status-error .progress-bar {
+    background-color: #dc3545;
+}
+
+.job-status-banner.status-warning .progress-bar {
+    background-color: #ffc107;
+}
+
+/* Details section */
+.job-status-banner .details {
+    margin-top: 10px;
+    font-size: 13px;
+}
+
+.job-status-banner .details-item {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 5px;
+}
+
+.job-status-banner .details-label {
+    font-weight: 500;
+    color: #6c757d;
+}
+
+.job-status-banner .details-value {
+    color: #212529;
+    text-align: right;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 170px;
+}
+
+/* Action buttons */
+.job-status-banner .banner-actions {
+    padding: 10px 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid #e9ecef;
+    background-color: #f8f9fa;
+}
+
+/* Minimize/expand toggle */
+.job-status-banner.minimized {
+    height: auto;
+}
+
+.job-status-banner.minimized .banner-body,
+.job-status-banner.minimized .banner-actions {
+    display: none;
+}
+
+/* Animation effects */
+@keyframes pulse {
+    0% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.5;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+.job-status-banner.pulse {
+    animation: banner-pulse 2s infinite;
+}
+
+@keyframes banner-pulse {
+    0% {
+        box-shadow: 0 4px 12px rgba(13, 110, 253, 0.15);
+    }
+    50% {
+        box-shadow: 0 4px 20px rgba(13, 110, 253, 0.3);
+    }
+    100% {
+        box-shadow: 0 4px 12px rgba(13, 110, 253, 0.15);
+    }
+}
+
+/* States colors */
+.job-status-banner.status-running {
+    border-left: 4px solid #0d6efd;
+}
+
+.job-status-banner.status-completed {
+    border-left: 4px solid #198754;
+}
+
+.job-status-banner.status-error {
+    border-left: 4px solid #dc3545;
+}
+
+.job-status-banner.status-warning {
+    border-left: 4px solid #ffc107;
+}
+
+/* Banner close button */
+.job-status-banner .banner-close,
+.job-status-banner .banner-minimize {
+    background: none;
+    border: none;
+    font-size: 16px;
+    cursor: pointer;
+    padding: 0 5px;
+    color: #6c757d;
+}
+
+.job-status-banner .banner-close:hover,
+.job-status-banner .banner-minimize:hover {
+    color: #343a40;
+}
+
+.job-status-banner .banner-controls {
+    display: flex;
+    gap: 5px;
+}
+
+.job-status-banner .banner-controls button {
+    background: none;
+    border: none;
+    font-size: 16px;
+    padding: 0;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    color: #6c757d;
+    cursor: pointer;
+}
+
+.job-status-banner .banner-controls button:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+    color: #000;
+}
+
+/* Banner buttons */
+.job-status-banner .btn-sm {
+    padding: 4px 8px;
+    font-size: 12px;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 576px) {
+    .job-status-banner {
+        width: calc(100% - 40px);
+        bottom: 10px;
+        right: 10px;
+    }
+}
+
+/* Activity indicator animation */
+@keyframes blink {
+    0% { opacity: 0.4; }
+    50% { opacity: 1; }
+    100% { opacity: 0.4; }
+}
+
+.job-status-banner .activity-indicator {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    margin-right: 8px;
+    background-color: #6c757d;
+}
+
+.job-status-banner.status-completed .activity-indicator {
+    background-color: #198754;
+    animation: none;
+}
+
+.job-status-banner.status-error .activity-indicator {
+    background-color: #dc3545;
+    animation: none;
+}
+
+.job-status-banner.status-warning .activity-indicator {
+    background-color: #ffc107;
+    animation: none;
+}
+
+/* View details link */
+.job-status-banner .view-details {
+    color: #0d6efd;
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.job-status-banner .view-details:hover {
+    text-decoration: underline;
+}
+
+.job-time {
+    font-size: 12px;
+    color: #6c757d;
+} 

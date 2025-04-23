@@ -1,0 +1,223 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Job {{ job.id }} - Details{% endblock %}
+
+{% block content %}
+<div class="container mx-auto p-4">
+    <h1 class="text-2xl font-bold mb-4">Job Details</h1>
+    
+    <div class="bg-white shadow-md rounded p-4 mb-6">
+        <div class="flex justify-between items-center mb-4">
+            <h2 class="text-xl">Job Information</h2>
+            <span class="px-3 py-1 rounded text-white
+                {% if job.status == 'completed' %} bg-green-500 
+                {% elif job.status == 'processing' %} bg-blue-500 
+                {% elif job.status == 'error' %} bg-red-500 
+                {% else %} bg-gray-500 {% endif %}">
+                {{ job.status }}
+            </span>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+                <p><strong>Job ID:</strong> {{ job.id }}</p>
+                <p><strong>Created:</strong> {{ job.created_at }}</p>
+                <p><strong>Status:</strong> {{ job.status }}</p>
+                <p><strong>Progress:</strong> {{ job.get_progress }}%</p>
+            </div>
+            <div>
+                <p><strong>Prompt:</strong> {{ job.prompt.name|default:"Default Prompt" }}</p>
+                <p><strong>Processed:</strong> {{ job.processed_count }} of {{ job.total_count }}</p>
+                {% if job.error_message %}
+                <p><strong>Error:</strong> <span class="text-red-500">{{ job.error_message }}</span></p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <div class="mb-6">
+        <h2 class="text-xl font-bold mb-4">Documents ({{ job.documents.count }})</h2>
+        
+        {% if job.documents.exists %}
+        <div class="overflow-x-auto">
+            <table class="min-w-full bg-white border border-gray-200">
+                <thead>
+                    <tr>
+                        <th class="py-2 px-4 border-b">Filename</th>
+                        <th class="py-2 px-4 border-b">Status</th>
+                        <th class="py-2 px-4 border-b">Created</th>
+                        <th class="py-2 px-4 border-b">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for document in job.documents.all %}
+                    <tr>
+                        <td class="py-2 px-4 border-b">{{ document.filename }}</td>
+                        <td class="py-2 px-4 border-b">
+                            <span class="px-2 py-1 rounded text-xs text-white
+                                {% if document.status == 'complete' %} bg-green-500 
+                                {% elif document.status == 'processing' %} bg-blue-500 
+                                {% elif document.status == 'error' %} bg-red-500 
+                                {% elif document.status == 'processed' %} bg-yellow-500
+                                {% else %} bg-gray-500 {% endif %}">
+                                {{ document.status }}
+                            </span>
+                        </td>
+                        <td class="py-2 px-4 border-b">{{ document.created_at }}</td>
+                        <td class="py-2 px-4 border-b">
+                            <!-- Removed invalid document_detail link -->
+                            
+                            {% with latest_result=document.results.last %}
+                                {% if latest_result and not latest_result.is_complete %}
+                                    <button 
+                                        class="ml-2 bg-blue-500 hover:bg-blue-600 text-white py-1 px-2 rounded text-xs continue-processing-btn"
+                                        data-document-id="{{ document.id }}"
+                                        data-document-name="{{ document.filename }}">
+                                        Continue Processing
+                                    </button>
+                                {% endif %}
+                            {% endwith %}
+                            
+                            {% if document.error %}
+                            <span class="ml-2 text-red-500 cursor-pointer show-error" title="{{ document.error }}">
+                                Show Error
+                            </span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <p class="text-gray-500">No documents found for this job.</p>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Error Modal -->
+<div id="errorModal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50">
+    <div class="bg-white p-6 rounded-lg max-w-lg w-full">
+        <div class="flex justify-between items-center mb-4">
+            <h3 class="text-lg font-bold">Error Details</h3>
+            <button class="close-modal text-gray-500 hover:text-gray-700">&times;</button>
+        </div>
+        <div class="error-content max-h-96 overflow-y-auto"></div>
+        <div class="mt-6 text-right">
+            <button class="close-modal bg-gray-300 hover:bg-gray-400 text-gray-800 py-2 px-4 rounded">Close</button>
+        </div>
+    </div>
+</div>
+
+<!-- Processing Modal -->
+<div id="processingModal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50">
+    <div class="bg-white p-6 rounded-lg max-w-lg w-full">
+        <div class="flex justify-between items-center mb-4">
+            <h3 class="text-lg font-bold">Processing Document</h3>
+            <button class="close-processing-modal text-gray-500 hover:text-gray-700">&times;</button>
+        </div>
+        <div class="processing-content">
+            <p>Continuing processing for <span id="documentName"></span>...</p>
+            <div class="mt-4">
+                <div class="w-full bg-gray-200 rounded-full h-2.5">
+                    <div class="bg-blue-600 h-2.5 rounded-full processing-progress" style="width: 0%"></div>
+                </div>
+            </div>
+            <p class="mt-2 text-center" id="processingStatus">Starting...</p>
+        </div>
+        <div class="mt-6 text-right">
+            <button class="close-processing-modal bg-gray-300 hover:bg-gray-400 text-gray-800 py-2 px-4 rounded">Close</button>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Error modal handling
+        const errorModal = document.getElementById('errorModal');
+        const errorContent = document.querySelector('.error-content');
+        
+        document.querySelectorAll('.show-error').forEach(btn => {
+            btn.addEventListener('click', function() {
+                errorContent.textContent = this.getAttribute('title');
+                errorModal.classList.remove('hidden');
+                errorModal.classList.add('flex');
+            });
+        });
+        
+        document.querySelectorAll('.close-modal').forEach(btn => {
+            btn.addEventListener('click', function() {
+                errorModal.classList.add('hidden');
+                errorModal.classList.remove('flex');
+            });
+        });
+        
+        // Continue processing handling
+        const processingModal = document.getElementById('processingModal');
+        const documentNameElement = document.getElementById('documentName');
+        const processingProgressBar = document.querySelector('.processing-progress');
+        const processingStatus = document.getElementById('processingStatus');
+        
+        document.querySelectorAll('.continue-processing-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const documentId = this.getAttribute('data-document-id');
+                const documentName = this.getAttribute('data-document-name');
+                
+                // Show the processing modal
+                documentNameElement.textContent = documentName;
+                processingModal.classList.remove('hidden');
+                processingModal.classList.add('flex');
+                
+                // Update progress bar to show activity
+                processingProgressBar.style.width = '10%';
+                processingStatus.textContent = 'Requesting continuation...';
+                
+                // Send the continuation request
+                fetch(`/continue-processing/${documentId}/`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                })
+                .then(response => {
+                    processingProgressBar.style.width = '50%';
+                    processingStatus.textContent = 'Processing...';
+                    return response.json();
+                })
+                .then(data => {
+                    processingProgressBar.style.width = '100%';
+                    
+                    if (data.status === 'success') {
+                        processingStatus.textContent = data.is_complete ? 
+                            'Processing completed successfully!' : 
+                            'Processing continued but more is needed. Click Continue Processing again.';
+                            
+                        // Refresh the page after a short delay
+                        setTimeout(() => {
+                            window.location.reload();
+                        }, 2000);
+                    } else {
+                        processingStatus.textContent = `Error: ${data.message}`;
+                    }
+                })
+                .catch(error => {
+                    processingProgressBar.style.width = '100%';
+                    processingStatus.textContent = `Error: ${error.message}`;
+                });
+            });
+        });
+        
+        document.querySelectorAll('.close-processing-modal').forEach(btn => {
+            btn.addEventListener('click', function() {
+                processingModal.classList.add('hidden');
+                processingModal.classList.remove('flex');
+            });
+        });
+    });
+</script>
+{% endblock %} 

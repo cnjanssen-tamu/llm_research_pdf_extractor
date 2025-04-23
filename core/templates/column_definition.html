@@ -1,0 +1,384 @@
+{% extends "base.html" %}
+{% load static %}
+{% load column_filters %}
+
+{% block extra_css %}
+<!-- Debug CSS loading -->
+<style>
+    /* Add a test style to verify CSS is loading */
+    body::before {
+        content: 'CSS loaded';
+        position: fixed;
+        top: 0;
+        right: 0;
+        background: green;
+        color: white;
+        padding: 5px;
+        z-index: 9999;
+        font-size: 12px;
+    }
+</style>
+<!-- Rest of your CSS -->
+{% endblock %}
+
+{% block extra_js %}
+<!-- Load the dedicated column definition JavaScript -->
+<script src="{% static 'js/column-definition.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- Debug info (remove in production) -->
+    <div class="debug-info" style="display: none;">
+        <h4>Debug Information:</h4>
+        <p>Number of categories: {{ categories|length }}</p>
+        <p>Number of columns: {{ columns|length }}</p>
+        <p>Categories:</p>
+        <ul>
+        {% for category_code, category_name, icon in categories %}
+            <li>{{ category_code }}: {{ category_name }} ({{ icon }})</li>
+        {% endfor %}
+        </ul>
+        <p>Columns:</p>
+        <ul>
+        {% for column in columns %}
+            <li>{{ column.name }} ({{ column.category }})</li>
+        {% endfor %}
+        </ul>
+    </div>
+    
+    <h2>Column Definitions</h2>
+    
+    <!-- Variables Section -->
+    <div class="card mb-3">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">Variables</h5>
+            <button class="btn btn-sm btn-outline-secondary toggle-button" type="button" data-bs-toggle="collapse" data-bs-target="#variablesCollapse">
+                <i class="bi bi-arrows-expand"></i> Toggle Variables
+            </button>
+        </div>
+        <div class="collapse" id="variablesCollapse">
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <label for="disease_condition" class="form-label">Disease Condition</label>
+                        <input type="text" class="form-control" id="disease_condition" name="disease_condition">
+                    </div>
+                    <div class="col-md-4">
+                        <label for="population_age" class="form-label">Population Age</label>
+                        <input type="text" class="form-control" id="population_age" name="population_age">
+                    </div>
+                    <div class="col-md-4">
+                        <label for="grading_of_lesion" class="form-label">Grading of Lesion</label>
+                        <input type="text" class="form-control" id="grading_of_lesion" name="grading_of_lesion">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="mb-3">
+        <button id="add-column" class="btn btn-primary">
+            <i class="bi bi-plus"></i> Add Column
+        </button>
+        <button id="apply-defaults" class="btn btn-secondary">
+            <i class="bi bi-arrow-counterclockwise"></i> Apply Defaults
+        </button>
+    </div>
+
+    <!-- Columns Accordion -->
+    <div class="accordion" id="columnsAccordion">
+        {% for category_code, category_name, icon in categories %}
+            <div class="accordion-item">
+                <h2 class="accordion-header">
+                    <button class="accordion-button {% if not forloop.first %}collapsed{% endif %}" 
+                            type="button" 
+                            data-bs-toggle="collapse" 
+                            data-bs-target="#collapse{{ category_code|slugify }}"
+                            aria-expanded="{% if forloop.first %}true{% else %}false{% endif %}"
+                            aria-controls="collapse{{ category_code|slugify }}">
+                        <i class="bi {{ icon }} category-icon"></i>
+                        <span class="category-name">{{ category_name }}</span>
+                        <span class="badge bg-secondary">
+                            {{ columns|filter_by_category:category_code|length }}
+                        </span>
+                        <i class="bi bi-chevron-down toggle-icon"></i>
+                    </button>
+                </h2>
+                <div id="collapse{{ category_code|slugify }}" 
+                     class="accordion-collapse collapse {% if forloop.first %}show{% endif %}" 
+                     data-bs-parent="#columnsAccordion">
+                    <div class="accordion-body">
+                        <div class="table-responsive">
+                            <table class="table table-striped" data-category="{{ category_code }}">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Description</th>
+                                        <th>Include Confidence</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for column in columns %}
+                                        {% if column.category == category_code %}
+                                            <tr data-column-id="{{ column.id }}" data-name="{{ column.name }}">
+                                                <td>{{ column.name }}</td>
+                                                <td>{{ column.description }}</td>
+                                                <td>
+                                                    <input type="checkbox" class="form-check-input" 
+                                                           {% if column.include_confidence %}checked{% endif %} disabled>
+                                                </td>
+                                                <td>
+                                                    <div class="btn-group">
+                                                        <button class="btn btn-sm btn-outline-primary edit-row">
+                                                            <i class="bi bi-pencil"></i>
+                                                        </button>
+                                                        <button class="btn btn-sm btn-outline-danger delete-row">
+                                                            <i class="bi bi-trash"></i>
+                                                        </button>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        {% endif %}
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+    <!-- Generated Prompt Section -->
+    <div class="card mt-3">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">Generated Prompt</h5>
+            <div class="btn-group">
+                <button class="btn btn-sm btn-outline-secondary toggle-button" type="button" 
+                        data-bs-toggle="collapse" data-bs-target="#promptCollapse">
+                    <i class="bi bi-arrows-expand"></i> Toggle Prompt
+                </button>
+                <button class="btn btn-sm btn-outline-primary" id="save-prompt">
+                    <i class="bi bi-save"></i> Save Prompt
+                </button>
+                <button class="btn btn-sm btn-outline-info" id="load-prompt">
+                    <i class="bi bi-folder-open"></i> Load Prompt
+                </button>
+            </div>
+        </div>
+        <div class="collapse" id="promptCollapse">
+            <div class="card-body">
+                <textarea id="generated-prompt" class="form-control" rows="10" readonly></textarea>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add this right after the Generated Prompt card -->
+    <div class="card mt-3" id="debug-info" style="display: none;">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">Debug Information</h5>
+            <button class="btn btn-sm btn-outline-secondary" onclick="this.closest('#debug-info').style.display='none'">
+                <i class="bi bi-x"></i>
+            </button>
+        </div>
+        <div class="card-body">
+            <h6>Generated Prompt:</h6>
+            <pre class="bg-light p-3 rounded"><code id="debug-prompt"></code></pre>
+        </div>
+    </div>
+</div>
+
+<!-- Column Modal -->
+<div class="modal fade" id="columnModal" tabindex="-1" aria-labelledby="columnModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="columnModalLabel">Column Definition</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="column-form">
+                    {% csrf_token %}
+                    <input type="hidden" id="column-id" name="id">
+                    <div class="mb-3">
+                        <label for="name" class="form-label">Name</label>
+                        <input type="text" class="form-control" id="name" name="name" required
+                               pattern="[a-zA-Z][a-zA-Z0-9_]*">
+                        <div class="form-text">Start with a letter, use only letters, numbers, and underscores</div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="description" class="form-label">Description</label>
+                        <textarea class="form-control" id="description" name="description" required></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="category" class="form-label">Category</label>
+                        <select class="form-select" id="category" name="category" required>
+                            {% for category_code, category_name, icon in categories %}
+                                <option value="{{ category_code }}" data-icon="{{ icon }}">
+                                    {{ category_name }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3 form-check">
+                        <input type="checkbox" class="form-check-input" id="include_confidence" 
+                               name="include_confidence" checked>
+                        <label class="form-check-label" for="include_confidence">
+                            Include Confidence Score
+                        </label>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" id="save-column">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Prompts Modal -->
+{% include "includes/prompts_modal.html" %}
+
+<!-- Pass JSON data and URLs to JS -->
+<script type="text/javascript">
+    // Disable job status banner polling (to prevent 404 errors)
+    window.disableJobStatusBanner = true;
+
+    // Make columns data available to our JavaScript
+    var columnsData = '{{ columns_json|escapejs }}';
+    if (columnsData) {
+        try {
+            window.columnsData = JSON.parse(columnsData);
+        } catch (e) {
+            console.error('Error parsing columns data:', e);
+            window.columnsData = [];
+        }
+    } else {
+        window.columnsData = [];
+    }
+    window.generatedPrompt = '{{ generated_prompt|escapejs }}';
+    
+    // Add URL paths for API endpoints
+    window.apiUrls = {
+        saveColumns: '{% url "core:save_columns" %}',
+        deleteColumn: '{% url "core:delete_column" pk=0 %}'.replace('0', ':id'),
+        applyDefaults: '{% url "core:apply_default_columns" %}',
+        savePrompt: '{% url "core:save_prompt" %}',
+        loadPrompts: '{% url "core:load_prompts" %}',
+        getPrompt: '{% url "core:get_prompt" pk=0 %}'.replace('0', ':id')
+    };
+    
+    // Log URLs for debugging
+    console.log('API URLs:', window.apiUrls);
+</script>
+
+<!-- Update the prompt template -->
+<script id="default-prompt-template" type="text/template">
+You are a medical data extractor. Your task is to extract patient case information from medical case reports, case series, and literature reviews into a structured format.
+
+IMPORTANT INSTRUCTIONS:
+
+For Case Reports (Single Cases):
+- Extract all available information for the single case
+- Look for detailed patient descriptions, treatment details, and follow-up
+- Prioritize information from Case Presentation/Results sections
+
+For Case Series (Multiple Cases):
+- Only extract data for cases directly managed/observed by the authors
+- Look for phrases like "our patient" or "in this study" to identify original cases
+- If more than two original cases are found, extract only the first two and add an instruction to request more
+- Focus only on cases with sufficient individual patient details
+- Skip summarized or externally sourced cases
+
+For Literature Reviews:
+- Only extract data from cases managed at the authors' institution
+- For aggregated data, provide ranges or distributions where applicable
+- Do not include information from external sources unless directly related to authors' cases
+
+Truncation and Continuation Rules:
+1. If there are more than two cases to process:
+   - Extract data for the first two cases only
+   - Add an instruction field with a continuation message
+   - Include the last processed case number for continuation
+2. If the response would be too long:
+   - Complete the current case being processed
+   - Add a continuation message in the instruction field
+   - Include context about where to continue from
+3. Use one of these continuation messages in the instruction field:
+   - "Request the next cases starting from case #X"
+   - "Continue with remaining cases after case #X"
+   - "More cases available, continue from case #X"
+
+General Rules:
+1. If information is unclear or unavailable, return an empty string with low confidence
+2. Do not guess or infer missing information
+3. Provide a "low_confidence_explanation" for any confidence scores below 80
+4. Always include the instruction field when there are more cases to process
+
+Required fields to extract for each case:
+{% for column in columns %}
+- {{ column.name }}: {{ column.description }}
+{% endfor %}
+
+Format your response as a JSON object with this EXACT structure:
+{
+    "case_results": [
+        {
+            {% for column in columns %}
+            "{{ column.name }}": {
+                "value": "actual extracted value",
+                "confidence": confidence_score_0_to_100
+            }{% if not forloop.last %},{% endif %}
+            {% endfor %}
+        }
+    ],
+    "low_confidence_explanation": {
+        "value": "Explain any confidence scores below 80",
+        "confidence": 100
+    },
+    "instruction": {
+        "value": "Request the next cases starting from case #X",
+        "confidence": 100
+    }
+}
+
+Example of what to return:
+{
+    "case_results": [
+        {
+            {% for column in columns|slice:":3" %}
+            "{{ column.name }}": {"value": "example value", "confidence": 95}{% if not forloop.last %},{% endif %}
+            {% endfor %}
+        }
+    ],
+    "low_confidence_explanation": {
+        "value": "Lab results were not clearly stated in the text",
+        "confidence": 100
+    },
+    "instruction": {
+        "value": "Request the next cases starting from case #3",
+        "confidence": 100
+    }
+}
+
+Context variables:
+- Disease condition: {{ disease_condition }}
+- Population age: {{ population_age }}
+- Grading of lesion: {{ grading_of_lesion }}
+
+Remember:
+1. Return ONLY the JSON object with case_results
+2. Use empty strings for missing values but maintain the structure
+3. Confidence scores must be integers from 0-100
+4. Each case should be a separate object in case_results array
+5. Keep the exact field names as specified
+6. Focus on extracting meaningful medical information
+7. Include low confidence explanations for any scores below 80
+8. Always include the instruction field when there are more cases to process
+9. Use clear continuation messages in the instruction field
+</script>
+{% endblock %}

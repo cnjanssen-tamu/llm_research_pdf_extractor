@@ -1,0 +1,105 @@
+{
+  "candidates": [
+    {
+      "content": {
+        "parts": [
+          {
+            "function_call": {
+              "name": "extract_references",
+              "args": {
+                "references": [
+                  {
+                    "pages": "123-145",
+                    "authors": "Smith, J., Doe, J.",
+                    "doi_or_url": "https://doi.org/10.1000/xyz123",
+                    "publication_year": 2020.0,
+                    "volume": "15",
+                    "title": "Advancements in AI Research",
+                    "source_name": "Journal of Artificial Intelligence",
+                    "citation_text": "Smith, J., & Doe, J. (2020). Advancements in AI Research. Journal of Artificial Intelligence, 15(2), 123-145. https://doi.org/10.1000/xyz123",
+                    "confidence": 95.0,
+                    "issue": "2",
+                    "source_type": "journal"
+                  },
+                  {
+                    "confidence": 92.0,
+                    "publication_year": 2018.0,
+                    "citation_text": "Brown, A. (2018). The Principles of Modern Physics. Academic Press.",
+                    "authors": "Brown, A.",
+                    "title": "The Principles of Modern Physics",
+                    "source_type": "book",
+                    "source_name": "Academic Press"
+                  },
+                  {
+                    "citation_text": "World Health Organization. (2023, May 15). Global Health Observatory data repository. Retrieved October 26, 2023, from https://www.who.int/data/gho",
+                    "source_name": "World Health Organization Website",
+                    "confidence": 88.0,
+                    "source_type": "website",
+                    "authors": "World Health Organization",
+                    "title": "Global Health Observatory data repository",
+                    "doi_or_url": "https://www.who.int/data/gho",
+                    "publication_year": 2023.0
+                  },
+                  {
+                    "citation_text": "Lee, C., & Kim, S. (2019). A Novel Approach to Machine Learning Optimization. In Proceedings of the International Conference on Machine Learning (ICML) (pp. 550-560). PMLR.",
+                    "publication_year": 2019.0,
+                    "source_type": "conference",
+                    "pages": "550-560",
+                    "confidence": 90.0,
+                    "title": "A Novel Approach to Machine Learning Optimization",
+                    "source_name": "Proceedings of the International Conference on Machine Learning (ICML)",
+                    "authors": "Lee, C., Kim, S."
+                  },
+                  {
+                    "authors": "National Institute of Standards and Technology",
+                    "publication_year": 2021.0,
+                    "doi_or_url": "https://doi.org/10.6028/NIST.SP.800-53r5",
+                    "source_type": "report",
+                    "confidence": 93.0,
+                    "title": "Cybersecurity Framework Version 1.1",
+                    "source_name": "U.S. Department of Commerce",
+                    "citation_text": "National Institute of Standards and Technology. (2021). Cybersecurity Framework Version 1.1 (NIST Special Publication 800-53 Rev. 5). U.S. Department of Commerce. https://doi.org/10.6028/NIST.SP.800-53r5"
+                  }
+                ]
+              }
+            }
+          }
+        ],
+        "role": "model"
+      },
+      "finish_reason": 1,
+      "index": 0,
+      "safety_ratings": [
+        {
+          "category": 7,
+          "probability": 1,
+          "blocked": false
+        },
+        {
+          "category": 10,
+          "probability": 1,
+          "blocked": false
+        },
+        {
+          "category": 8,
+          "probability": 1,
+          "blocked": false
+        },
+        {
+          "category": 9,
+          "probability": 1,
+          "blocked": false
+        }
+      ],
+      "token_count": 0,
+      "grounding_attributions": [],
+      "avg_logprobs": 0.0
+    }
+  ],
+  "usage_metadata": {
+    "prompt_token_count": 568,
+    "candidates_token_count": 1764,
+    "total_token_count": 2332,
+    "cached_content_token_count": 0
+  }
+}

@@ -1,0 +1,182 @@
+{% load custom_filters %}
+
+<div class="table-responsive">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>File Name</th>
+                <th>Study Author</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for doc in documents %}
+            <tr data-bs-toggle="collapse" data-bs-target="#collapseDoc{{ doc.id }}" class="accordion-toggle" style="cursor: pointer;">
+                <td>{{ forloop.counter }}</td>
+                <td>{{ doc.filename }}</td>
+                <td>{{ doc.study_author|default:"Not specified" }}</td>
+                <td>
+                    <span class="badge {% if doc.status == 'complete' %}bg-success{% elif doc.status == 'error' %}bg-danger{% elif doc.status == 'processed' %}bg-warning{% else %}bg-primary{% endif %}">
+                        {{ doc.status|title }}
+                    </span>
+                    {% if doc.status == 'processed' %}
+                    <span class="badge bg-info ms-1" title="This document response was truncated">Truncated</span>
+                    {% endif %}
+                </td>
+                <td>
+                    <div class="btn-group btn-group-sm">
+                        <a href="{{ doc.file.url }}" target="_blank" class="btn btn-outline-primary">
+                            <i class="bi bi-file-pdf"></i> View PDF
+                        </a>
+                        {% if doc.status == 'processed' %}
+                        <button class="btn btn-outline-warning" onclick="continueProcessing('{{ doc.id }}'); event.stopPropagation();">
+                            <i class="bi bi-arrow-clockwise"></i> Continue
+                        </button>
+                        {% endif %}
+                        {% if doc.status == 'error' %}
+                        <button class="btn btn-outline-danger" onclick="rerunDocument('{{ doc.id }}'); event.stopPropagation();">
+                            <i class="bi bi-arrow-repeat"></i> Rerun
+                        </button>
+                        <button class="btn btn-outline-warning" onclick="toggleErrorDetails('error-details-{{ doc.id }}'); event.stopPropagation();">
+                            <i class="bi bi-exclamation-triangle"></i> View Error
+                        </button>
+                        {% endif %}
+                        <button class="btn btn-outline-info toggle-btn" data-target="#collapseDoc{{ doc.id }}" onclick="event.stopPropagation();">
+                            <i class="bi bi-chevron-down"></i> <span>Show Cases</span>
+                        </button>
+                    </div>
+                </td>
+            </tr>
+            <!-- Add error details row -->
+            <tr class="error-details-row" id="error-details-{{ doc.id }}" style="display: none;">
+                <td colspan="5" class="p-0">
+                    <div class="card-body bg-light border-top border-bottom p-3">
+                        <h5 class="mb-3 text-danger">Error Details for {{ doc.filename }}</h5>
+                        {% if doc.error %}
+                        <div class="alert alert-danger">
+                            <strong>Error Message:</strong> {{ doc.error }}
+                        </div>
+                        {% endif %}
+                        
+                        {% get_first_matching_result results doc.id as matching_result %}
+                        {% if matching_result and matching_result.json_result and 'error' in matching_result.json_result %}
+                        <div class="alert alert-danger">
+                            <strong>Processing Error:</strong> {{ matching_result.json_result.error }}
+                        </div>
+                        {% endif %}
+                        
+                        {% if matching_result and matching_result.raw_result %}
+                        <div class="mt-3">
+                            <h6>Raw Gemini Response:</h6>
+                            <div class="d-flex justify-content-between mb-2">
+                                <a href="{% url 'core:download_raw_markdown' matching_result.id %}" class="btn btn-sm btn-primary">
+                                    <i class="bi bi-download"></i> Download Raw Text
+                                </a>
+                            </div>
+                            <pre class="bg-light p-3 rounded" style="max-height: 300px; overflow-y: auto; white-space: pre-wrap; font-size: 0.8rem;">{{ matching_result.raw_result }}</pre>
+                        </div>
+                        {% endif %}
+                        
+                        <div class="mt-3">
+                            <h6>Troubleshooting Tips:</h6>
+                            <ul>
+                                <li>Check that the document is a valid PDF that can be processed.</li>
+                                <li>The PDF may contain complex formatting that's difficult for the AI to parse.</li>
+                                <li>Try processing with a different prompt or splitting into multiple documents.</li>
+                                <li>If you see error code 429, wait a few minutes and try again (rate limiting).</li>
+                            </ul>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            <!-- Cases collapsible row -->
+            <tr>
+                <td colspan="5" class="p-0">
+                    <div class="collapse" id="collapseDoc{{ doc.id }}">
+                        <div class="card-body bg-light border-top border-bottom p-3">
+                            <h5 class="mb-3">Cases from {{ doc.filename }}</h5>
+                            
+                            <!-- Add Raw JSON View Button -->
+                            {% get_first_matching_result results doc.id as matching_result %}
+                            {% if matching_result and matching_result.raw_result %}
+                            <div class="mb-3">
+                                <button class="btn btn-sm btn-outline-secondary" onclick="toggleRawJSON('raw-json-{{ doc.id }}')">
+                                    <i class="bi bi-code-square"></i> Show Raw JSON Response
+                                </button>
+                                <div id="raw-json-{{ doc.id }}" class="mt-2" style="display: none;">
+                                    <div class="card">
+                                        <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                                            <span>Raw Gemini Response</span>
+                                            <a href="{% url 'core:download_raw_markdown' matching_result.id %}" class="btn btn-sm btn-outline-primary">
+                                                <i class="bi bi-download"></i> Download
+                                            </a>
+                                        </div>
+                                        <div class="card-body p-0">
+                                            <pre class="m-0 p-3 bg-light" style="max-height: 300px; overflow-y: auto; white-space: pre-wrap; font-size: 0.8rem;">{{ matching_result.raw_result }}</pre>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endif %}
+                            
+                            <div class="table-responsive" style="max-height: 400px; overflow-y: auto;">
+                                <table class="table table-sm table-hover case-preview-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Case #</th>
+                                            {% get_first_matching_result results doc.id as matching_result %}
+                                            {% if matching_result and matching_result.json_result and 'case_results' in matching_result.json_result %}
+                                                {% with case_results=matching_result.json_result|get_item:'case_results' %}
+                                                    {% if case_results|length > 0 %}
+                                                        {% with first_case=case_results.0 %}
+                                                            {% for key, value in first_case.items %}
+                                                                {% if key != 'case_number' %}
+                                                                    <th>{{ key|title }}</th>
+                                                                {% endif %}
+                                                            {% endfor %}
+                                                        {% endwith %}
+                                                    {% endif %}
+                                                {% endwith %}
+                                            {% endif %}
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for result in results %}
+                                            {% if result.document.id == doc.id and result.json_result and 'case_results' in result.json_result %}
+                                                {% with case_results=result.json_result|get_item:'case_results' %}
+                                                    {% for case in case_results %}
+                                                        <tr>
+                                                            <td>{{ case.case_number.value|default:forloop.counter }}</td>
+                                                            {% for key, value in case.items %}
+                                                                {% if key != 'case_number' %}
+                                                                    <td>
+                                                                        {% if value.value %}
+                                                                            {{ value.value|default:"N/A"|truncatechars:100 }}
+                                                                        {% else %}
+                                                                            N/A
+                                                                        {% endif %}
+                                                                    </td>
+                                                                {% endif %}
+                                                            {% endfor %}
+                                                        </tr>
+                                                    {% empty %}
+                                                        <tr>
+                                                            <td colspan="100" class="text-center">No cases found for this document</td>
+                                                        </tr>
+                                                    {% endfor %}
+                                                {% endwith %}
+                                            {% endif %}
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div> 

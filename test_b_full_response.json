@@ -1,0 +1,657 @@
+{
+  "candidates": [
+    {
+      "content": {
+        "parts": [
+          {
+            "text": "{\n  \"references\": [\n    {\n      \"citation_text\": \"1. Rogers L, Barani I, Chamberlain M, Kaley TJ, McDermott M, Raizer J, et al. Meningiomas: Knowledge Base, treatment outcomes, and uncertainties. A Rano Review. J Neurosurg. (2015) 122:4-23. doi: 10.3171/2014.7.JNS131644\",\n      \"source_type\": \"journal\",\n      \"authors\": \"Rogers L, Barani I, Chamberlain M, Kaley TJ, McDermott M, Raizer J, et al.\",\n      \"title\": \"Meningiomas: Knowledge Base, treatment outcomes, and uncertainties. A Rano Review\",\n      \"source_name\": \"J Neurosurg.\",\n      \"publication_year\": 2015,\n      \"volume\": \"122\",\n      \"issue\": null,\n      \"pages\": \"4-23\",\n      \"doi_or_url\": \"10.3171/2014.7.JNS131644\",\n      \"confidence\": 100\n    },\n    {\n      \"citation_text\": \"2. Zankl H, Zang KD. Cytological and Cytogenetical Studies on Brain Tumors. 4. Identification of the missing G chromosome in human Meningiomas as no. 22 by fluorescence technique. Humangenetik. (1972) 14:167-9. doi: 10.1007/bf00273305\",\n      \"source_type\": \"journal\",\n      \"authors\": \"Zankl H, Zang KD.\",\n      \"title\": \"Cytological and Cytogenetical Studies on Brain Tumors. 4. Identification of the missing G chromosome in human Meningiomas as no. 22 by fluorescence technique\",\n      \"source_name\": \"Humangenetik.\",\n      \"publication_year\": 1972,\n      \"volume\": \"14\",\n      \"issue\": null,\n      \"pages\": \"167-9\",\n      \"doi_or_url\": \"10.1007/bf00273305\",\n      \"confidence\": 100\n    },\n    {\n      \"citation_text\": \"3. Ruttledge MH, Sarrazin J, Rangaratnam S, Phelan CM, Twist E, Merel P, et al. Evidence for the complete inactivation of the Nf2 gene in the majority of sporadic Meningiomas. Nat Genet. (1994) 6:180-4. doi: 10.1038/ng0294-180\",\n      \"source_type\": \"journal\",\n      \"authors\": \"Ruttledge MH, Sarrazin J, Rangaratnam S, Phelan CM, Twist E, Merel P, et al.\",\n      \"title\": \"Evidence for the complete inactivation of the Nf2 gene in the majority of sporadic Meningiomas\",\n      \"source_name\": \"Nat Genet.\",\n      \"publication_year\": 1994,\n      \"volume\": \"6\",\n      \"issue\": null,\n      \"pages\": \"180-4\",\n      \"doi_or_url\": \"10.1038/ng0294-180\",\n      \"confidence\": 100\n    },\n    {\n      \"citation_text\": \"4. De Vitis LR, Tedde A, Vitelli F, Ammannati F, Mennonna P, Bigozzi U, et al. Screening for mutations in the Neurofibromatosis type 2 (Nf2) gene in sporadic Meningiomas. Hum Genet. (1996) 97:632-7. doi: 10.1007/bf02281874\",\n      \"source_type\": \"journal\",\n      \"authors\": \"De Vitis LR, Tedde A, Vitelli F, Ammannati F, Mennonna P, Bigozzi U, et al.\",\n      \"title\": \"Screening for mutations in the Neurofibromatosis type 2 (Nf2) gene in sporadic Meningiomas\",\n      \"source_name\": \"Hum Genet.\",\n      \"publication_year\": 1996,\n      \"volume\": \"97\",\n      \"issue\": null,\n      \"pages\": \"632-7\",\n      \"doi_or_url\": \"10.1007/bf02281874\",\n      \"confidence\": 100\n    },\n    {\n      \"citation_text\": \"5. Teranishi Y, Okano A, Miyawaki S, Ohara K, Ishigami D, Hongo H, et al. Clinical significance of Nf2 alteration in grade I Meningiomas revisited; prognostic impact integrated with extent of resection, tumour location, and Ki-67 index. Acta Neuropathol Commun. (2022) 10:76. doi: 10.1186/s40478-022-01377-w\",\n      \"source_type\": \"journal\",\n      \"authors\": \"Teranishi Y, Okano A, Miyawaki S, Ohara K, Ishigami D, Hongo H, et al.\",\n      \"title\": \"Clinical significance of Nf2 alteration in grade I Meningiomas revisited; prognostic impact integrated with extent of resection, tumour location, and Ki-67 index\",\n      \"source_name\": \"Acta Neuropathol Commun.\",\n      \"publication_year\": 2022,\n      \"volume\": \"10\",\n      \"issue\": null,\n      \"pages\": \"76\",\n      \"doi_or_url\": \"10.1186/s40478-022-01377-w\",\n      \"confidence\": 100\n    },\n    {\n      \"citation_text\": \"6. Abedalthagafi M, Bi WL, Aizer AA, Merrill PH, Brewster R, Agarwalla PK, et al. Oncogenic Pi3k mutations are as common as Akt1 and Smo mutations in meningioma. Neuro Oncol. (2016) 18:649-55. doi: 10.1093/neuonc/nov316\",\n      \"source_type\": \"journal\",\n      \"authors\": \"Abedalthagafi M, Bi WL, Aizer AA, Merrill PH, Brewster R, Agarwalla PK, et al.\",\n      \"title\": \"Oncogenic Pi3k mutations are as common as Akt1 and Smo mutations in meningioma\",\n      \"source_name\": \"Neuro Oncol.\",\n      \"publication_year\": 2016,\n      \"volume\": \"18\",\n      \"issue\": null,\n      \"pages\": \"649-55\",\n      \"doi_or_url\": \"10.1093/neuonc/nov316\",\n      \"confidence\": 100\n    },\n    {\n      \"citation_text\": \"7. Brastianos PK, Horowitz PM, Santagata S, Jones RT, McKenna A, Getz G, et al. Genomic sequencing of Meningiomas identifies oncogenic Smo and Akt1 mutations. Nat Genet. (2013) 45:285-9. doi: 10.1038/ng.2526\",\n      \"source_type\": \"journal\",\n      \"authors\": \"Brastianos PK, Horowitz PM, Santagata S, Jones RT, McKenna A, Getz G, et al.\",\n      \"title\": \"Genomic sequencing of Meningiomas identifies oncogenic Smo and Akt1 mutations\",\n      \"source_name\": \"Nat Genet.\",\n      \"publication_year\": 2013,\n      \"volume\": \"45\",\n      \"issue\": null,\n      \"pages\": \"285-9\",\n      \"doi_or_url\": \"10.1038/ng.2526\",\n      \"confidence\": 100\n    },\n    {\n      \"citation_text\": \"8. Clark VE, Erson-Omay EZ, Serin A, Yin J, Cotney J, Ozduman K, et al. Genomic analysis of non-Nf2 Meningiomas reveals mutations in Traf7, Klf4, Akt1, and Smo. Science. (2013) 339:1077-80. doi: 10.1126/science.1233009\",\n      \"source_type\": \"journal\",\n      \"authors\": \"Clark VE, Erson-Omay EZ, Serin A, Yin J, Cotney J, Ozduman K, et al.\",\n      \"title\": \"Genomic analysis of non-Nf2 Meningiomas reveals mutations in Traf7, Klf4, Akt1, and Smo\",\n      \"source_name\": \"Science.\",\n      \"publication_year\": 2013,\n      \"volume\": \"339\",\n      \"issue\": null,\n      \"pages\": \"1077-80\",\n      \"doi_or_url\": \"10.1126/science.1233009\",\n      \"confidence\": 100\n    },\n    {\n      \"citation_text\": \"9. Clark VE, Harmanci AS, Bai H, Youngblood MW, Lee TI, Baranoski JF, et al. Recurrent somatic mutations in Polr2a define a distinct subset of Meningiomas. Nat Genet. (2016) 48:1253-9. doi: 10.1038/ng.3651\",\n      \"source_type\": \"journal\",\n      \"authors\": \"Clark VE, Harmanci AS, Bai H, Youngblood MW, Lee TI, Baranoski JF, et al.\",\n      \"title\": \"Recurrent somatic mutations in Polr2a define a distinct subset of Meningiomas\",\n      \"source_name\": \"Nat Genet.\",\n      \"publication_year\": 2016,\n      \"volume\": \"48\",\n      \"issue\": null,\n      \"pages\": \"1253-9\",\n      \"doi_or_url\": \"10.1038/ng.3651\",\n      \"confidence\": 100\n    },\n    {\n      \"citation_text\": \"10. Okano A, Miyawaki S, Hongo H, Dofuku S, Teranishi Y, Mitsui J, et al. Associations of pathological diagnosis and genetic abnormalities in Meningiomas with the embryological origins of the meninges. Sci Rep. (2021) 11:6987. doi: 10.1038/s41598-021-86298-9\",\n      \"source_type\": \"journal\",\n      \"authors\": \"Okano A, Miyawaki S, Hongo H, Dofuku S, Teranishi Y, Mitsui J, et al.\",\n      \"title\": \"Associations of pathological diagnosis and genetic abnormalities in Meningiomas with the embryological origins of the meninges\",\n      \"source_name\": \"Sci Rep.\",\n      \"publication_year\": 2021,\n      \"volume\": \"11\",\n      \"issue\": null,\n      \"pages\": \"6987\",\n      \"doi_or_url\": \"10.1038/s41598-021-86298-9\",\n      \"confidence\": 100\n    },\n    {\n      \"citation_text\": \"11. Patel AJ, Wan YW, Al-Ouran R, Revelli JP, Cardenas MF, Oneissi M, et al. Molecular profiling predicts meningioma recurrence and reveals loss of dream complex repression in aggressive tumors. Proc Natl Acad Sci US A. (2019) 116:21715-26. doi: 10.1073/pnas.1912858116\",\n      \"source_type\": \"journal\",\n      \"authors\": \"Patel AJ, Wan YW, Al-Ouran R, Revelli JP, Cardenas MF, Oneissi M, et al.\",\n      \"title\": \"Molecular profiling predicts meningioma recurrence and reveals loss of dream complex repression in aggressive tumors\",\n      \"source_name\": \"Proc Natl Acad Sci U S A.\",\n      \"publication_year\": 2019,\n      \"volume\": \"116\",\n      \"issue\": null,\n      \"pages\": \"21715-26\",\n      \"doi_or_url\": \"10.1073/pnas.1912858116\",\n      \"confidence\": 100\n    },\n    {\n      \"citation_text\": \"12. Sahm F, Schrimpf D, Stichel D, Jones DTW, Hielscher T, Schefzyk S, et al. DNA methylation-based classification and grading system for meningioma: A multicentre, retrospective analysis. Lancet Oncol. (2017) 18:682-94. doi: 10.1016/s1470-2045(17)30155-9\",\n      \"source_type\": \"journal\",\n      \"authors\": \"Sahm F, Schrimpf D, Stichel D, Jones DTW, Hielscher T, Schefzyk S, et al.\",\n      \"title\": \"DNA methylation-based classification and grading"
+          }
+        ],
+        "role": "model"
+      },
+      "finish_reason": 2,
+      "index": 0,
+      "safety_ratings": [
+        {
+          "category": 9,
+          "probability": 1,
+          "blocked": false
+        },
+        {
+          "category": 8,
+          "probability": 1,
+          "blocked": false
+        },
+        {
+          "category": 7,
+          "probability": 1,
+          "blocked": false
+        },
+        {
+          "category": 10,
+          "probability": 1,
+          "blocked": false
+        }
+      ],
+      "citation_metadata": {
+        "citation_sources": [
+          {
+            "start_index": 1330,
+            "end_index": 1505,
+            "uri": "https://ijmscr.org/index.php/ijmscrs/article/view/999",
+            "license_": ""
+          },
+          {
+            "start_index": 1388,
+            "end_index": 1547,
+            "uri": "https://www.frontiersin.org/journals/endocrinology/articles/10.3389/fendo.2024.1407615/epub?isPublishedV2=false",
+            "license_": ""
+          },
+          {
+            "start_index": 1587,
+            "end_index": 1740,
+            "uri": "",
+            "license_": ""
+          },
+          {
+            "start_index": 1882,
+            "end_index": 2068,
+            "uri": "https://www.scielo.br/j/bjmbr/a/XZzSpjwcHQ7kcqbhwQhyyYQ/?lang=en",
+            "license_": ""
+          },
+          {
+            "start_index": 2127,
+            "end_index": 2299,
+            "uri": "https://www.scribd.com/document/414871637/menigeoma",
+            "license_": ""
+          },
+          {
+            "start_index": 2365,
+            "end_index": 2557,
+            "uri": "https://www.frontiersin.org/journals/neurology/articles/10.3389/fneur.2023.1270046/epub",
+            "license_": ""
+          },
+          {
+            "start_index": 2439,
+            "end_index": 2628,
+            "uri": "http://neuros-teikyo.com/kenkyu/index.html",
+            "license_": ""
+          },
+          {
+            "start_index": 2694,
+            "end_index": 2864,
+            "uri": "https://neuro-dev.unilim.fr/spip.php?article1609",
+            "license_": ""
+          },
+          {
+            "start_index": 2766,
+            "end_index": 2909,
+            "uri": "https://patents.justia.com/patent/11946935",
+            "license_": ""
+          },
+          {
+            "start_index": 2932,
+            "end_index": 3107,
+            "uri": "https://www.scielo.br/j/anp/a/bf8zWCF7yRxtF3rPmBCmvyd/?lang=en",
+            "license_": ""
+          },
+          {
+            "start_index": 2983,
+            "end_index": 3135,
+            "uri": "https://patents.justia.com/patent/11946935",
+            "license_": ""
+          },
+          {
+            "start_index": 3158,
+            "end_index": 3336,
+            "uri": "https://pearl.plymouth.ac.uk/bitstream/handle/10026.1/9710/Manuscript_Provenzano_Ammoun_Hanemann.docx?sequence=3",
+            "license_": ""
+          },
+          {
+            "start_index": 3217,
+            "end_index": 3373,
+            "uri": "https://patents.justia.com/patent/11946935",
+            "license_": ""
+          },
+          {
+            "start_index": 3414,
+            "end_index": 3567,
+            "uri": "https://www.frontiersin.org/articles/10.3389/fonc.2021.750690/epub",
+            "license_": ""
+          },
+          {
+            "start_index": 3444,
+            "end_index": 3595,
+            "uri": "https://www.frontiersin.org/journals/oncology/articles/10.3389/fonc.2021.747592/epub",
+            "license_": ""
+          },
+          {
+            "start_index": 3620,
+            "end_index": 3807,
+            "uri": "https://ibommedicaljournal.org/index.php/imjhome/article/view/310/759",
+            "license_": ""
+          },
+          {
+            "start_index": 3719,
+            "end_index": 3867,
+            "uri": "https://www.frontiersin.org/journals/oncology/articles/10.3389/fonc.2022.892004/epub",
+            "license_": ""
+          },
+          {
+            "start_index": 3897,
+            "end_index": 4082,
+            "uri": "https://www.frontiersin.org/articles/10.3389/fonc.2022.931371/epub",
+            "license_": ""
+          },
+          {
+            "start_index": 4185,
+            "end_index": 4374,
+            "uri": "https://qims.amegroups.org/article/view/117523/html",
+            "license_": ""
+          },
+          {
+            "start_index": 4281,
+            "end_index": 4436,
+            "uri": "https://www.frontiersin.org/journals/oncology/articles/10.3389/fonc.2024.1395985/epub?isPublishedV2=false",
+            "license_": ""
+          },
+          {
+            "start_index": 4459,
+            "end_index": 4642,
+            "uri": "https://mnj.ub.ac.id/index.php/mnj/article/view/644",
+            "license_": ""
+          },
+          {
+            "start_index": 4584,
+            "end_index": 4730,
+            "uri": "https://www.frontiersin.org/journals/oncology/articles/10.3389/fonc.2021.662260/epub",
+            "license_": ""
+          },
+          {
+            "start_index": 4754,
+            "end_index": 4928,
+            "uri": "https://www.frontiersin.org/journals/neurology/articles/10.3389/fneur.2023.1270046/epub",
+            "license_": ""
+          },
+          {
+            "start_index": 4825,
+            "end_index": 4960,
+            "uri": "https://paperity.org/p/309774766/etiology-of-super-enhancer-reprogramming-and-activation-in-cancer",
+            "license_": ""
+          },
+          {
+            "start_index": 5018,
+            "end_index": 5201,
+            "uri": "http://www.medscape.com/viewarticle/742064_2",
+            "license_": ""
+          },
+          {
+            "start_index": 5082,
+            "end_index": 5233,
+            "uri": "http://cco.amegroups.com/article/view/49600/html",
+            "license_": ""
+          },
+          {
+            "start_index": 5288,
+            "end_index": 5460,
+            "uri": "http://www.medscape.com/viewarticle/818661_10",
+            "license_": ""
+          },
+          {
+            "start_index": 5366,
+            "end_index": 5505,
+            "uri": "https://paperity.org/p/267828116/regression-of-intracranial-meningiomas-following-treatment-with-cabozantinib",
+            "license_": ""
+          },
+          {
+            "start_index": 5536,
+            "end_index": 5687,
+            "uri": "http://uklira14.ru/id-6478.html",
+            "license_": ""
+          },
+          {
+            "start_index": 5592,
+            "end_index": 5720,
+            "uri": "https://www.cancernetwork.com/view/treatment-meningioma-including-cases-no-further-surgical-or-radiotherapy-options",
+            "license_": ""
+          },
+          {
+            "start_index": 5769,
+            "end_index": 5950,
+            "uri": "https://www.frontiersin.org/journals/neurology/articles/10.3389/fneur.2023.1270046/epub",
+            "license_": ""
+          },
+          {
+            "start_index": 6047,
+            "end_index": 6204,
+            "uri": "http://www.medscape.com/viewarticle/742064_2",
+            "license_": ""
+          },
+          {
+            "start_index": 6282,
+            "end_index": 6462,
+            "uri": "https://www.frontiersin.org/journals/neurology/articles/10.3389/fneur.2023.1270046/epub",
+            "license_": ""
+          },
+          {
+            "start_index": 6384,
+            "end_index": 6529,
+            "uri": "https://www.frontiersin.org/articles/10.3389/fonc.2022.850463/epub",
+            "license_": ""
+          },
+          {
+            "start_index": 6556,
+            "end_index": 6741,
+            "uri": "https://www.scribd.com/document/414871637/menigeoma",
+            "license_": ""
+          },
+          {
+            "start_index": 6676,
+            "end_index": 6825,
+            "uri": "https://www.frontiersin.org/journals/oncology/articles/10.3389/fonc.2021.737523/epub",
+            "license_": ""
+          },
+          {
+            "start_index": 6854,
+            "end_index": 7004,
+            "uri": "https://www.redalyc.org/journal/843/84374116004/",
+            "license_": ""
+          },
+          {
+            "start_index": 7067,
+            "end_index": 7228,
+            "uri": "https://jbcs.xsrv.jp/guideline/2022/b_index/frq6/",
+            "license_": ""
+          },
+          {
+            "start_index": 7149,
+            "end_index": 7289,
+            "uri": "https://bombesinreceptor.com/index.php/osimertinib/",
+            "license_": ""
+          },
+          {
+            "start_index": 7336,
+            "end_index": 7510,
+            "uri": "https://www.frontiersin.org/journals/oncology/articles/10.3389/fonc.2024.1357583/epub?isPublishedV2=false",
+            "license_": ""
+          },
+          {
+            "start_index": 7418,
+            "end_index": 7557,
+            "uri": "https://www.frontiersin.org/journals/oncology/articles/10.3389/fonc.2024.1357583/epub?isPublishedV2=false",
+            "license_": ""
+          },
+          {
+            "start_index": 7588,
+            "end_index": 7775,
+            "uri": "http://www.cancerbiomed.org/index.php/cocr/article/view/1885/1990",
+            "license_": ""
+          },
+          {
+            "start_index": 7684,
+            "end_index": 7835,
+            "uri": "https://www.oncotarget.com/article/11994/text/",
+            "license_": ""
+          },
+          {
+            "start_index": 7854,
+            "end_index": 8052,
+            "uri": "https://www.frontiersin.org/journals/neurology/articles/10.3389/fneur.2023.1270046/epub",
+            "license_": ""
+          },
+          {
+            "start_index": 8136,
+            "end_index": 8331,
+            "uri": "https://www.frontiersin.org/journals/neurology/articles/10.3389/fneur.2023.1270046/epub",
+            "license_": ""
+          },
+          {
+            "start_index": 8226,
+            "end_index": 8357,
+            "uri": "https://www.ncc.go.jp/en/publication_report/2019/nccri/nccri02.html",
+            "license_": ""
+          },
+          {
+            "start_index": 8423,
+            "end_index": 8621,
+            "uri": "https://www.frontiersin.org/journals/neurology/articles/10.3389/fneur.2023.1270046/epub",
+            "license_": ""
+          },
+          {
+            "start_index": 8504,
+            "end_index": 8655,
+            "uri": "http://kokyuki.umin.jp/305.html",
+            "license_": ""
+          },
+          {
+            "start_index": 8752,
+            "end_index": 8937,
+            "uri": "https://www.frontiersin.org/journals/neurology/articles/10.3389/fneur.2023.1270046/epub",
+            "license_": ""
+          },
+          {
+            "start_index": 8873,
+            "end_index": 9019,
+            "uri": "https://www.frontiersin.org/articles/10.3389/fonc.2021.740782/epub",
+            "license_": ""
+          },
+          {
+            "start_index": 9104,
+            "end_index": 9272,
+            "uri": "https://www.frontiersin.org/journals/immunology/articles/10.3389/fimmu.2024.1412174/epub?isPublishedV2=false",
+            "license_": ""
+          },
+          {
+            "start_index": 9304,
+            "end_index": 9464,
+            "uri": "http://www.medscape.com/viewarticle/566365",
+            "license_": ""
+          },
+          {
+            "start_index": 9352,
+            "end_index": 9506,
+            "uri": "https://patents.google.com/patent/CA2412736A1/en",
+            "license_": ""
+          },
+          {
+            "start_index": 9586,
+            "end_index": 9737,
+            "uri": "https://www.frontiersin.org/journals/neurology/articles/10.3389/fneur.2023.1270046/epub",
+            "license_": ""
+          },
+          {
+            "start_index": 9825,
+            "end_index": 9989,
+            "uri": "https://www.frontiersin.org/articles/10.3389/fonc.2021.750690/epub",
+            "license_": ""
+          },
+          {
+            "start_index": 9864,
+            "end_index": 10022,
+            "uri": "https://www.frontiersin.org/journals/oncology/articles/10.3389/fonc.2024.1395985/epub?isPublishedV2=false",
+            "license_": ""
+          },
+          {
+            "start_index": 10048,
+            "end_index": 10205,
+            "uri": "https://www.frontiersin.org/journals/neurology/articles/10.3389/fneur.2023.1270046/epub",
+            "license_": ""
+          },
+          {
+            "start_index": 10110,
+            "end_index": 10255,
+            "uri": "https://www.frontiersin.org/articles/10.3389/fonc.2022.850463/epub",
+            "license_": ""
+          },
+          {
+            "start_index": 10281,
+            "end_index": 10461,
+            "uri": "https://www.frontiersin.org/journals/neurology/articles/10.3389/fneur.2023.1270046/epub",
+            "license_": ""
+          },
+          {
+            "start_index": 10359,
+            "end_index": 10499,
+            "uri": "https://www.cureus.com/articles/213462-next-generation-dna-sequencing-of-grade-1-meningioma-tumours-a-case-report-of-angiomatous-and-psammomatous-meningiomas",
+            "license_": ""
+          },
+          {
+            "start_index": 10547,
+            "end_index": 10737,
+            "uri": "https://www.frontiersin.org/journals/neurology/articles/10.3389/fneur.2023.1270046/epub",
+            "license_": ""
+          },
+          {
+            "start_index": 10661,
+            "end_index": 10816,
+            "uri": "https://www.frontiersin.org/journals/oncology/articles/10.3389/fonc.2021.760892/epub",
+            "license_": ""
+          },
+          {
+            "start_index": 10850,
+            "end_index": 10994,
+            "uri": "https://www.frontiersin.org/journals/oncology/articles/10.3389/fonc.2022.967420/epub",
+            "license_": ""
+          },
+          {
+            "start_index": 11014,
+            "end_index": 11197,
+            "uri": "https://www.frontiersin.org/journals/neurology/articles/10.3389/fneur.2023.1270046/epub",
+            "license_": ""
+          },
+          {
+            "start_index": 11292,
+            "end_index": 11485,
+            "uri": "https://www.frontiersin.org/journals/oncology/articles/10.3389/fonc.2023.1192575/epub?isPublishedV2=false",
+            "license_": ""
+          },
+          {
+            "start_index": 11390,
+            "end_index": 11530,
+            "uri": "https://surgicalneurologyint.com/surgicalint-articles/role-of-bevacizumab-for-treatment-refractory-meningiomas-a-systematic-analysis-and-literature-review/",
+            "license_": ""
+          },
+          {
+            "start_index": 11586,
+            "end_index": 11777,
+            "uri": "https://www.frontiersin.org/journals/oncology/articles/10.3389/fonc.2023.1192575/epub?isPublishedV2=false",
+            "license_": ""
+          },
+          {
+            "start_index": 11839,
+            "end_index": 12020,
+            "uri": "https://www.frontiersin.org/journals/oncology/articles/10.3389/fonc.2023.1192575/epub?isPublishedV2=false",
+            "license_": ""
+          },
+          {
+            "start_index": 11933,
+            "end_index": 12085,
+            "uri": "https://www.frontiersin.org/journals/oncology/articles/10.3389/fonc.2022.892004/epub",
+            "license_": ""
+          },
+          {
+            "start_index": 12106,
+            "end_index": 12268,
+            "uri": "https://www.frontiersin.org/journals/neurology/articles/10.3389/fneur.2023.1270046/epub",
+            "license_": ""
+          },
+          {
+            "start_index": 12178,
+            "end_index": 12303,
+            "uri": "https://www.cureus.com/articles/125531-immunohistochemical-expression-of-ki-67-dopamine-d1-and-dopamine-d2-receptors-in-meningiomas-in-a-tertiary-institution-in-mexico?score_article=true",
+            "license_": ""
+          },
+          {
+            "start_index": 12354,
+            "end_index": 12544,
+            "uri": "https://www.frontiersin.org/journals/neurology/articles/10.3389/fneur.2023.1270046/epub",
+            "license_": ""
+          },
+          {
+            "start_index": 12631,
+            "end_index": 12773,
+            "uri": "https://www.jmir.org/2023/1/e44119",
+            "license_": ""
+          },
+          {
+            "start_index": 12844,
+            "end_index": 13029,
+            "uri": "https://www.frontiersin.org/articles/10.3389/fonc.2022.931371/epub",
+            "license_": ""
+          },
+          {
+            "start_index": 12907,
+            "end_index": 13067,
+            "uri": "https://www.frontiersin.org/journals/oncology/articles/10.3389/fonc.2024.1395985/epub?isPublishedV2=false",
+            "license_": ""
+          },
+          {
+            "start_index": 13092,
+            "end_index": 13235,
+            "uri": "https://www.frontiersin.org/journals/immunology/articles/10.3389/fimmu.2023.1294565/epub",
+            "license_": ""
+          },
+          {
+            "start_index": 13118,
+            "end_index": 13323,
+            "uri": "https://www.frontiersin.org/journals/oncology/articles/10.3389/fonc.2023.1112018/epub",
+            "license_": ""
+          },
+          {
+            "start_index": 13492,
+            "end_index": 13667,
+            "uri": "https://ijmscr.org/index.php/ijmscrs/article/view/999",
+            "license_": ""
+          },
+          {
+            "start_index": 13550,
+            "end_index": 13709,
+            "uri": "https://www.frontiersin.org/journals/endocrinology/articles/10.3389/fendo.2024.1407615/epub?isPublishedV2=false",
+            "license_": ""
+          },
+          {
+            "start_index": 14205,
+            "end_index": 14358,
+            "uri": "",
+            "license_": ""
+          },
+          {
+            "start_index": 14507,
+            "end_index": 14660,
+            "uri": "",
+            "license_": ""
+          },
+          {
+            "start_index": 14910,
+            "end_index": 15096,
+            "uri": "https://www.scielo.br/j/bjmbr/a/XZzSpjwcHQ7kcqbhwQhyyYQ/?lang=en",
+            "license_": ""
+          },
+          {
+            "start_index": 15617,
+            "end_index": 15789,
+            "uri": "https://www.scribd.com/document/414871637/menigeoma",
+            "license_": ""
+          },
+          {
+            "start_index": 16313,
+            "end_index": 16505,
+            "uri": "https://www.frontiersin.org/journals/neurology/articles/10.3389/fneur.2023.1270046/epub",
+            "license_": ""
+          },
+          {
+            "start_index": 16387,
+            "end_index": 16576,
+            "uri": "http://neuros-teikyo.com/kenkyu/index.html",
+            "license_": ""
+          },
+          {
+            "start_index": 16762,
+            "end_index": 16914,
+            "uri": "http://neuros-teikyo.com/kenkyu/index.html",
+            "license_": ""
+          },
+          {
+            "start_index": 17185,
+            "end_index": 17355,
+            "uri": "https://neuro-dev.unilim.fr/spip.php?article1609",
+            "license_": ""
+          },
+          {
+            "start_index": 17257,
+            "end_index": 17400,
+            "uri": "https://patents.justia.com/patent/11946935",
+            "license_": ""
+          },
+          {
+            "start_index": 17878,
+            "end_index": 18053,
+            "uri": "https://www.scielo.br/j/anp/a/bf8zWCF7yRxtF3rPmBCmvyd/?lang=en",
+            "license_": ""
+          },
+          {
+            "start_index": 17929,
+            "end_index": 18081,
+            "uri": "https://patents.justia.com/patent/11946935",
+            "license_": ""
+          },
+          {
+            "start_index": 18547,
+            "end_index": 18725,
+            "uri": "https://pearl.plymouth.ac.uk/bitstream/handle/10026.1/9710/Manuscript_Provenzano_Ammoun_Hanemann.docx?sequence=3",
+            "license_": ""
+          },
+          {
+            "start_index": 18606,
+            "end_index": 18762,
+            "uri": "https://patents.justia.com/patent/11946935",
+            "license_": ""
+          },
+          {
+            "start_index": 19257,
+            "end_index": 19410,
+            "uri": "https://www.frontiersin.org/articles/10.3389/fonc.2021.750690/epub",
+            "license_": ""
+          },
+          {
+            "start_index": 19287,
+            "end_index": 19438,
+            "uri": "https://www.frontiersin.org/journals/oncology/articles/10.3389/fonc.2021.747592/epub",
+            "license_": ""
+          },
+          {
+            "start_index": 19904,
+            "end_index": 20091,
+            "uri": "https://ibommedicaljournal.org/index.php/imjhome/article/view/310/759",
+            "license_": ""
+          },
+          {
+            "start_index": 20003,
+            "end_index": 20151,
+            "uri": "https://www.frontiersin.org/journals/oncology/articles/10.3389/fonc.2022.892004/epub",
+            "license_": ""
+          },
+          {
+            "start_index": 20299,
+            "end_index": 20419,
+            "uri": "https://www.ncbi.nlm.nih.gov/gene/5430",
+            "license_": ""
+          },
+          {
+            "start_index": 20674,
+            "end_index": 20859,
+            "uri": "https://www.frontiersin.org/articles/10.3389/fonc.2022.931371/epub",
+            "license_": ""
+          },
+          {
+            "start_index": 21074,
+            "end_index": 21197,
+            "uri": "https://cdn.elifesciences.org/articles/70691/elife-70691-v2.xml",
+            "license_": ""
+          },
+          {
+            "start_index": 21467,
+            "end_index": 21656,
+            "uri": "https://qims.amegroups.org/article/view/117523/html",
+            "license_": ""
+          },
+          {
+            "start_index": 21563,
+            "end_index": 21718,
+            "uri": "https://www.frontiersin.org/journals/oncology/articles/10.3389/fonc.2024.1395985/epub?isPublishedV2=false",
+            "license_": ""
+          }
+        ]
+      },
+      "token_count": 0,
+      "grounding_attributions": [],
+      "avg_logprobs": 0.0
+    }
+  ],
+  "usage_metadata": {
+    "prompt_token_count": 2318,
+    "candidates_token_count": 8179,
+    "total_token_count": 10497,
+    "cached_content_token_count": 0
+  }
+}
