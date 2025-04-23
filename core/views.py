@@ -24,6 +24,7 @@ from datetime import datetime
 import uuid
 import django.db.utils
 from django.db import transaction
+from io import StringIO
 
 # Third-party imports
 import google.generativeai as genai
@@ -3282,49 +3283,92 @@ def test_gemini_structured_output(request):
 @require_POST
 def load_schema_from_file(request):
     """
-    Load extraction schema from a file and create column definitions.
-    Similar to the management command but available via web interface.
+    Load extraction schema from an uploaded file and create column definitions.
     """
     try:
-        # Get file path from request, or use default
-        data = json.loads(request.body) if request.body else {}
-        file_path = data.get('file_path', 
-            '/Users/chrisjanssen/Insync/cnjanssen@tamu.edu/Google Drive/COM/Research/human_vs_llm/human_reviewer_django/extraction_schema_dump.json')
-        
-        clear_existing = data.get('clear_existing', False)
-        
-        if not os.path.exists(file_path):
+        # Get the uploaded file
+        uploaded_file = request.FILES.get('schema_file')
+        if not uploaded_file:
             return JsonResponse({
                 'success': False,
-                'error': f'File not found: {file_path}'
-            }, status=404)
-        
+                'error': 'No schema file uploaded.'
+            }, status=400)
+
+        # Get the clear_existing flag from POST data (sent via FormData)
+        # FormData values are strings, so check for 'true'
+        clear_existing_str = request.POST.get('clear_existing', 'false').lower()
+        clear_existing = clear_existing_str == 'true'
+
+        # Check file type (optional but good practice)
+        if not uploaded_file.name.endswith('.json'):
+            return JsonResponse({
+                'success': False,
+                'error': 'Invalid file type. Please upload a .json file.'
+            }, status=400)
+
         # Clear existing columns if requested
         if clear_existing:
-            ColumnDefinition.objects.all().delete()
-            logger.info("Cleared existing column definitions")
-        
-        # Load the schema file - similar to the management command
-        with open(file_path, 'r') as f:
-            # The file might be a list of objects or just a JSON object
             try:
-                # First try to read as JSON array with objects
-                data = json.load(f)
-                if isinstance(data, dict):
-                    data = [data]
-            except json.JSONDecodeError:
-                # If that fails, try to read line by line
-                f.seek(0)
-                data = []
-                for line in f:
-                    try:
-                        obj = json.loads(line.strip())
-                        data.append(obj)
-                    except json.JSONDecodeError:
-                        continue
+                ColumnDefinition.objects.all().delete()
+                logger.info("Cleared existing column definitions")
+            except Exception as e:
+                 logger.error(f"Error clearing existing columns: {e}")
+                 return JsonResponse({
+                    'success': False,
+                    'error': f'Error clearing existing columns: {e}'
+                 }, status=500)
         
-        # Category mappings based on field descriptions and contexts
+        # Load the schema content from the uploaded file
+        # Read the file content as text
+        try:
+            file_content = uploaded_file.read().decode('utf-8')
+            # Use StringIO to treat the string content like a file for json.load
+            file_stream = StringIO(file_content)
+        except Exception as e:
+            logger.error(f"Error reading uploaded file: {e}")
+            return JsonResponse({
+                'success': False,
+                'error': f'Error reading uploaded file: {e}'
+            }, status=400)
+        
+        try:
+            # First try to read as JSON array with objects
+            data = json.load(file_stream)
+            if isinstance(data, dict):
+                # If it's a single object, wrap it in a list
+                data = [data]
+        except json.JSONDecodeError:
+            # If that fails, try to read line by line (if it was a JSONL file)
+            try:
+                file_stream.seek(0) # Reset stream position
+                data = []
+                for line in file_stream:
+                    line = line.strip()
+                    if not line: continue
+                    try:
+                        obj = json.loads(line)
+                        data.append(obj)
+                    except json.JSONDecodeError as line_err:
+                        logger.warning(f"Skipping invalid JSON line: {line_err} - Line: {line[:100]}...")
+                        continue
+                if not data:
+                     raise ValueError("File is not valid JSON or JSONL.") # Raise error if no valid lines found
+            except Exception as e:
+                 logger.error(f"Error parsing schema file content: {e}")
+                 return JsonResponse({
+                    'success': False,
+                    'error': f'Error parsing schema file content: {e}'
+                 }, status=400)
+        except Exception as e:
+             logger.error(f"Unexpected error loading JSON data: {e}")
+             return JsonResponse({
+                'success': False,
+                'error': f'Unexpected error loading JSON data: {e}'
+             }, status=500)
+
+        # --- Keep the existing category and data type mappings --- 
         category_mappings = {
+            # (Mappings remain the same as before)
             # Presenting Symptoms
             'loss_of_bladder_control': 'presentation',
             'parasthesia': 'presentation',
@@ -3421,7 +3465,6 @@ def load_schema_from_file(request):
             'status_ad': 'outcome'
         }
 
-        # Data type mappings
         data_type_mappings = {
             'BOOLEAN': 'boolean',
             'TEXT': 'string',
@@ -3430,93 +3473,107 @@ def load_schema_from_file(request):
             'SELECT': 'enum'
         }
 
-        # Process each schema item
+        # --- Keep the processing logic --- 
         created_count = 0
         updated_count = 0
-        for item in data:
-            # Extract fields from the extraction schema
-            if "fields" not in item:
-                continue
-                
-            fields = item['fields']
-            field_name = fields.get('field_name', '')
-            field_label = fields.get('field_label', '')
-            field_type = fields.get('field_type', '')
-            description = fields.get('description', '')
-            choices = fields.get('choices', '')
-            is_required = not fields.get('is_required', True)  # Invert for 'optional'
-            order = fields.get('order', 0)
-            
-            # Skip if field_name is empty
-            if not field_name:
-                continue
-                
-            # Map to appropriate category and data type
-            category = category_mappings.get(field_name, 'clinical')  # Default to clinical
-            data_type = data_type_mappings.get(field_type, 'string')  # Default to string
-            
-            # Prepare enum_values if applicable
-            enum_values = None
-            if choices and data_type == 'enum':
-                enum_values = choices.split(',')
-            
-            # Create or update the column definition
-            column, created = ColumnDefinition.objects.update_or_create(
-                name=field_name,
-                defaults={
-                    'description': f"{field_label}: {description}" if description else field_label,
-                    'include_confidence': True,
-                    'optional': is_required,
-                    'category': category,
-                    'data_type': data_type,
-                    'enum_values': enum_values,
-                    'order': order
-                }
-            )
-            
-            if created:
-                created_count += 1
-                logger.info(f"Created column: {field_name}")
-            else:
-                updated_count += 1
-                logger.info(f"Updated column: {field_name}")
+        processed_count = 0 # Count fields actually processed
         
-        # Create a new prompt from the schema after loading it
+        # Wrap database operations in a transaction
         try:
-            # Generate a prompt template based on the newly created columns
-            column_prompt = ColumnDefinitionView.generate_prompt_template()
-            
-            if column_prompt:
-                # Create a new prompt with the generated template
-                prompt_name = f"Schema Prompt ({datetime.now().strftime('%Y-%m-%d %H:%M')})"
-                prompt = SavedPrompt.objects.create(
-                    name=prompt_name,
-                    content=column_prompt
-                )
-                logger.info(f"Created new prompt from schema: {prompt_name}")
-                prompt_id = prompt.id
-            else:
-                prompt_id = None
-                logger.warning("Could not generate prompt from columns")
+             with transaction.atomic():
+                for item in data:
+                    # Extract fields from the schema item
+                    if not isinstance(item, dict) or "fields" not in item:
+                        logger.warning(f"Skipping invalid item in schema data: {item}")
+                        continue
+                        
+                    fields = item['fields']
+                    if not isinstance(fields, dict):
+                         logger.warning(f"Skipping item with invalid 'fields' structure: {item}")
+                         continue
+                         
+                    field_name = fields.get('field_name', '')
+                    field_label = fields.get('field_label', '')
+                    field_type = fields.get('field_type', '')
+                    description = fields.get('description', '')
+                    choices = fields.get('choices', '')
+                    # In schema, is_required=true means it's required, so optional=False
+                    # In schema, is_required=false means it's optional, so optional=True
+                    is_optional = not fields.get('is_required', True)
+                    order = fields.get('order', 0)
+                    
+                    # Skip if field_name is empty
+                    if not field_name:
+                        logger.warning(f"Skipping item with missing field_name: {item}")
+                        continue
+                    
+                    # Map to appropriate category and data type
+                    category = category_mappings.get(field_name, 'clinical')  # Default to clinical
+                    data_type = data_type_mappings.get(field_type, 'string')  # Default to string
+                    
+                    # Prepare enum_values if applicable
+                    enum_values = None
+                    if choices and data_type == 'enum':
+                        # Ensure choices is a string before splitting
+                        if isinstance(choices, str):
+                             enum_values = [choice.strip() for choice in choices.split(',') if choice.strip()]
+                        else:
+                             logger.warning(f"Invalid 'choices' format for field {field_name}: {choices}. Expected string.")
+
+                    # Create or update the column definition
+                    try:
+                        column, created = ColumnDefinition.objects.update_or_create(
+                            name=field_name,
+                            defaults={
+                                'description': f"{field_label}: {description}" if description else field_label,
+                                'include_confidence': True,
+                                'optional': is_optional,
+                                'category': category,
+                                'data_type': data_type,
+                                'enum_values': enum_values,
+                                'order': order
+                            }
+                        )
+                        processed_count += 1
+                        if created:
+                            created_count += 1
+                            # logger.info(f"Created column: {field_name}") # Reduce log noise
+                        else:
+                            updated_count += 1
+                            # logger.info(f"Updated column: {field_name}") # Reduce log noise
+                    except Exception as db_err:
+                         logger.error(f"Database error processing field '{field_name}': {db_err}")
+                         # Depending on requirements, you might want to stop or continue
+                         # For now, let's return an error to indicate partial failure
+                         raise db_err # Re-raise to be caught by the outer transaction handler
+                         
         except Exception as e:
-            logger.error(f"Error creating prompt from columns: {e}")
-            prompt_id = None
-            
+            logger.error(f"Error during schema processing transaction: {e}")
+            return JsonResponse({
+                'success': False,
+                'error': f'Error processing schema: {e}'
+            }, status=500)
+        
+        # --- End of Transaction --- 
+
+        success_message = f"Schema processed successfully. Processed: {processed_count}, Created: {created_count}, Updated: {updated_count}."
+        if clear_existing: success_message += " Existing columns cleared."
+        logger.info(success_message)
+        
         return JsonResponse({
             'success': True,
+            'message': success_message,
             'created_count': created_count,
             'updated_count': updated_count,
-            'total_columns': created_count + updated_count,
-            'prompt_created': prompt_id is not None,
-            'prompt_id': prompt_id,
-            'message': f"Successfully loaded schema from file. Created {created_count} columns, updated {updated_count} columns."
+            'processed_count': processed_count,
+            'prompt_created': False # Add logic for prompt creation if needed later
         })
-        
+
     except Exception as e:
-        logger.error(f"Error loading schema from file: {e}", exc_info=True)
+        logger.exception("Unexpected error in load_schema_from_file view") # Log the full traceback
         return JsonResponse({
             'success': False,
-            'error': str(e)
+            'error': f'An unexpected server error occurred: {str(e)}'
         }, status=500)
 
 

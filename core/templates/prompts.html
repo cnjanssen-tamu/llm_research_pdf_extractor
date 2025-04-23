@@ -39,17 +39,16 @@
                         <!-- Schema configuration -->
                         <div id="schemaConfig" class="mt-3" style="display: none;">
                             <div class="form-group mb-2">
-                                <label class="form-label">Schema File Path</label>
-                                <input type="text" id="schemaFilePath" class="form-control" 
-                                       value="/Users/chrisjanssen/Insync/cnjanssen@tamu.edu/Google Drive/COM/Research/human_vs_llm/human_reviewer_django/extraction_schema_dump.json">
+                                <label for="schemaFileInput" class="form-label">Select Schema File (.json)</label>
+                                <input type="file" id="schemaFileInput" class="form-control" accept=".json">
                             </div>
                             <div class="form-check mb-2">
                                 <input type="checkbox" id="clearExisting" class="form-check-input" checked>
                                 <label class="form-check-label" for="clearExisting">Clear existing columns</label>
                             </div>
                             <div class="d-grid">
-                                <button class="btn btn-primary btn-sm" onclick="loadSchemaFromFilePath()">
-                                    <i class="bi bi-arrow-repeat"></i> Load Schema from File
+                                <button class="btn btn-primary btn-sm" onclick="uploadSchemaFile()">
+                                    <i class="bi bi-upload"></i> Upload and Load Schema
                                 </button>
                             </div>
                         </div>
@@ -402,39 +401,58 @@ function loadSchemaFromFile() {
     // Show the configuration panel
     document.getElementById('schemaConfig').style.display = 'block';
     
-    // Focus on the file path input
-    document.getElementById('schemaFilePath').focus();
+    // Focus on the file input button (or the input itself)
+    document.getElementById('schemaFileInput').focus();
 }
 
-function loadSchemaFromFilePath() {
-    const filePath = document.getElementById('schemaFilePath').value;
+function uploadSchemaFile() {
+    const fileInput = document.getElementById('schemaFileInput');
     const clearExisting = document.getElementById('clearExisting').checked;
-    
-    if (!filePath) {
-        alert('Please provide a file path');
+    const file = fileInput.files[0]; // Get the selected file
+
+    if (!file) {
+        alert('Please select a schema file (.json)');
         return;
     }
     
+    if (file.type !== 'application/json') {
+         alert('Please select a valid JSON file.');
+         return;
+    }
+
     // Show loading indicator
     const statusEl = document.getElementById('schemaStatus');
     const messageEl = document.getElementById('schemaMessage');
     statusEl.classList.remove('alert-success', 'alert-danger', 'alert-warning');
     statusEl.classList.add('alert-info');
-    messageEl.innerHTML = '<strong>Loading...</strong> Processing schema file...';
-    
+    messageEl.innerHTML = '<strong>Uploading...</strong> Processing schema file...';
+
+    // Use FormData to send the file
+    const formData = new FormData();
+    formData.append('schema_file', file); // Use 'schema_file' as the key
+    formData.append('clear_existing', clearExisting);
+
     // Make the API request
     fetch('/columns/load-schema-from-file/', {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json',
+            // Content-Type is set automatically by browser when using FormData
             'X-CSRFToken': getCookie('csrftoken')
         },
-        body: JSON.stringify({
-            file_path: filePath,
-            clear_existing: clearExisting
-        })
+        body: formData // Send FormData object
     })
-    .then(response => response.json())
+    .then(response => {
+        if (!response.ok) {
+             // Try to get error message from JSON response body
+             return response.json().then(errData => {
+                 throw new Error(errData.error || `Server error: ${response.status}`);
+             }).catch(() => {
+                 // Fallback if response body is not JSON or empty
+                 throw new Error(`Server error: ${response.status}`);
+             });
+        }
+        return response.json();
+    })
     .then(data => {
         if (data.success) {
             // Update status indicator
@@ -451,19 +469,20 @@ function loadSchemaFromFilePath() {
             // Refresh the prompts list
             loadPrompts();
             
-            // Hide the config after successful load
+            // Hide the config and clear the file input after successful load
+            fileInput.value = ''; // Clear the file input
             setTimeout(() => {
                 document.getElementById('schemaConfig').style.display = 'none';
             }, 3000);
         } else {
-            // Show error
+            // Show specific error from server response
             statusEl.classList.remove('alert-info', 'alert-success', 'alert-warning');
             statusEl.classList.add('alert-danger');
-            messageEl.innerHTML = `<strong>Error:</strong> ${data.error}`;
+            messageEl.innerHTML = `<strong>Error:</strong> ${data.error || 'Unknown error occurred.'}`;
         }
     })
     .catch(error => {
-        // Show error
+        // Show fetch or server error
         statusEl.classList.remove('alert-info', 'alert-success', 'alert-warning');
         statusEl.classList.add('alert-danger');
         messageEl.innerHTML = `<strong>Error:</strong> ${error.message}`;
