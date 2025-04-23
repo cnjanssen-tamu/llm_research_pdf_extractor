@@ -20,6 +20,11 @@ ALLOWED_HOSTS = [
     'localhost'
 ]
 
+# Add the Railway domain for CSRF checks over HTTPS
+CSRF_TRUSTED_ORIGINS = [
+    'https://llmresearchpdfextractor-production.up.railway.app'
+]
+
 # Application definition
 INSTALLED_APPS = [
     'django.contrib.admin',
