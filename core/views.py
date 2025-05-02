@@ -1481,40 +1481,49 @@ class ProcessorView(FormView):
             # Try a workaround to avoid the datatype mismatch - create a new job from scratch
             try:
                 # Try to save with default method first
+                logger.info(f"Attempting standard job.save() for job: {job.name}") # LOGGING ADDED
                 job.save()
+                logger.info(f"Standard job.save() successful for job ID: {job.id}") # LOGGING ADDED
             except django.db.utils.IntegrityError as e:
                 if "datatype mismatch" in str(e):
-                    logger.warning("Attempting workaround for datatype mismatch error")
+                    logger.warning(f"Standard job.save() failed with datatype mismatch: {e}. Attempting raw SQL workaround.") # LOGGING ADDED
                     
                     # Create a new job manually
                     from django.db import connection
                     
-                    with connection.cursor() as cursor:
-                        cursor.execute("""
-                            INSERT INTO core_processingjob 
-                            (id, name, prompt_template, created_at, updated_at, status, processed_count, total_count, error_message, prompt_id, processing_details)
-                            VALUES (?, ?, ?, datetime('now'), datetime('now'), ?, ?, ?, ?, ?, ?)
-                        """, [
-                            str(uuid.uuid4()),
-                            job.name,
-                            job.prompt_template,
-                            job.status,
-                            job.processed_count,
-                            job.total_count,
-                            job.error_message or '',  # Use empty string if None
-                            job.prompt_id,
-                            job.processing_details or ''  # Use empty string if None
-                        ])
-                        
-                        # Get the last inserted ID
-                        cursor.execute("SELECT last_insert_rowid()")
-                        last_id = cursor.fetchone()[0]
-                        
-                        # Get the job we just created
-                        job = ProcessingJob.objects.get(pk=last_id)
-                        logger.info(f"Created job {job.id} using raw SQL workaround")
+                    try: # LOGGING ADDED: Wrap raw SQL in try/except
+                        with connection.cursor() as cursor:
+                            new_job_id = str(uuid.uuid4()) # LOGGING ADDED: Generate ID beforehand
+                            logger.info(f"Executing raw SQL insert for new job ID: {new_job_id}") # LOGGING ADDED
+                            cursor.execute("""
+                                INSERT INTO core_processingjob 
+                                (id, name, prompt_template, created_at, updated_at, status, processed_count, total_count, error_message, prompt_id, processing_details, job_type, user_id)
+                                VALUES (?, ?, ?, datetime('now'), datetime('now'), ?, ?, ?, ?, ?, ?, ?, ?)
+                            """, [
+                                new_job_id, # Use pre-generated ID
+                                job.name,
+                                job.prompt_template,
+                                job.status,
+                                job.processed_count,
+                                job.total_count,
+                                job.error_message or '',
+                                job.prompt_id,
+                                job.processing_details or '',
+                                job.job_type or 'case_extraction', # Ensure job_type has a default
+                                job.user_id # Include user_id if applicable
+                            ])
+                            
+                            # Get the job we just created using the known ID
+                            job = ProcessingJob.objects.get(id=new_job_id)
+                            logger.info(f"Successfully created job {job.id} using raw SQL workaround.") # LOGGING ADDED
+                    except Exception as raw_sql_e: # LOGGING ADDED
+                        logger.error(f"Raw SQL workaround failed: {raw_sql_e}", exc_info=True) # LOGGING ADDED
+                        # Re-raise the original error or handle appropriately
+                        raise e # Or return an error response
+
                 else:
                     # If it's a different type of error, raise it
+                    logger.error(f"IntegrityError during job save (not datatype mismatch): {e}", exc_info=True) # LOGGING ADDED
                     raise
 
             # Get the file data for report names and study authors from the POST data
@@ -1556,6 +1565,7 @@ class ProcessorView(FormView):
                 pdf_metadata_list.append(metadata)
 
             # Process PDFs with direct Gemini API calls
+            logger.info(f"Calling process_pdfs_with_gemini for job ID: {job.id}") # LOGGING ADDED
             return self.process_pdfs_with_gemini(job, pdf_file_data_list, pdf_file_name_list, pdf_metadata_list)
 
         except Exception as e:
@@ -1567,29 +1577,47 @@ class ProcessorView(FormView):
     
     def process_pdfs_with_gemini(self, job, pdf_file_data_list, pdf_file_name_list, pdf_metadata_list=None):
         """Process PDFs by sending them directly to Gemini with vision capabilities"""
+        # LOGGING ADDED: Log entry and initial state
+        logger.info(f"Entered process_pdfs_with_gemini for job ID: {job.id}. Processing {len(pdf_file_data_list)} files.")
+        logger.debug(f"Job status at entry: {job.status}")
+        
         try:
             if not pdf_file_data_list or not pdf_file_name_list:
+                # LOGGING ADDED: Log specific error condition
+                logger.error(f"Job {job.id}: No PDF files provided to process_pdfs_with_gemini.")
                 raise ValueError("No PDF files provided")
             
             if len(pdf_file_data_list) != len(pdf_file_name_list):
+                # LOGGING ADDED: Log specific error condition
+                logger.error(f"Job {job.id}: Mismatched PDF data ({len(pdf_file_data_list)}) and filenames ({len(pdf_file_name_list)}).")
                 raise ValueError("Mismatched PDF data and filenames")
             
             # If no metadata provided, create empty list
             if pdf_metadata_list is None:
+                # LOGGING ADDED: Log metadata generation
+                logger.info(f"Job {job.id}: No metadata provided, generating default metadata.")
                 pdf_metadata_list = [{'report_name': name, 'study_author': name.replace('.pdf', '')} 
                                      for name in pdf_file_name_list]
             
             # Update total file count if not already set
             if job.total_count == 0:
+                logger.info(f"Job {job.id}: Updating total_count to {len(pdf_file_data_list)}.")
                 job.total_count = len(pdf_file_data_list)
-                job.save()
+                # Save immediately? Or rely on the status save below? Let's save here for clarity.
+                job.save(update_fields=['total_count']) 
             
             # Set job status to processing
+            logger.info(f"Job {job.id}: Setting status to 'processing'.")
             job.status = 'processing'
-            job.save()
+            job.save(update_fields=['status']) # Save status change explicitly
             
             # Get prompt template
+            logger.info(f"Job {job.id}: Fetching prompt template.") # LOGGING ADDED
             prompt_template = self._get_prompt_template(job)
+            if not prompt_template: # LOGGING ADDED
+                logger.error(f"Job {job.id}: Failed to get a valid prompt template.") # LOGGING ADDED
+                raise ValueError("Could not retrieve or generate a valid prompt template.") # LOGGING ADDED
+            logger.info(f"Job {job.id}: Prompt template fetched successfully.") # LOGGING ADDED
             
             # Process each PDF
             successful_count = 0
@@ -1728,7 +1756,12 @@ class ProcessorView(FormView):
         """Process a PDF by sending it directly to Gemini with vision capabilities"""
         try:
             # Get Gemini API key
-            load_dotenv(os.path.join(os.getcwd(), '.env'), override=True)
+            # --- MODIFIED --- Only load dotenv if DEBUG is True
+            if settings.DEBUG:
+                load_dotenv(os.path.join(os.getcwd(), '.env'), override=True)
+                logger.info("DEBUG mode: Loaded .env file")
+            # --- END MODIFIED ---
+            
             api_key = os.getenv('GEMINI_API_KEY')
             if not api_key:
                 raise ValueError("GEMINI_API_KEY not found in environment variables")
@@ -3970,7 +4003,12 @@ class ReferenceExtractionView(FormView):
             import google.generativeai as genai
             from google.generativeai.types import HarmCategory, HarmBlockThreshold, GenerationConfig
             
-            load_dotenv(override=True)  # Ensure latest API key
+            # --- MODIFIED --- Only load dotenv if DEBUG is True
+            if settings.DEBUG:
+                load_dotenv(override=True)  # Ensure latest API key
+                logger.info("DEBUG mode: Loaded .env file for Gemini API Text JSON")
+            # --- END MODIFIED ---
+            
             api_key = os.getenv('GEMINI_API_KEY')
             if not api_key:
                 logger.error("GEMINI_API_KEY not found.")
