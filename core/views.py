@@ -4136,22 +4136,6 @@ Do NOT include references 1 through {start_from_number-1} which were already ext
 Ensure the response is ONLY the valid JSON object.
 """
 
-# Wrap the code at the end of the file to avoid early access to job_type field
-# Find where it tries to print recent jobs and modify it
-
-# For example, if there's code like this at the bottom:
-# for j in recent_jobs:
-#     print(f"{j.id}: {j.name} ({j.status}) - {j.job_type}")
-
-# Modify it to:
-try:
-    for j in recent_jobs:
-        print(f"{j.id}: {j.name} ({j.status})")
-        # Don't access job_type until migrations are applied
-except Exception as e:
-    print(f"Error accessing recent jobs: {e}")
-    recent_jobs = []
-
 @require_GET
 def test_reference_extraction(request):
     """Test route for reference extraction using the updated Gemini API with text-JSON approach."""
