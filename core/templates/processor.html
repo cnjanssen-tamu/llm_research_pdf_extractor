@@ -488,8 +488,9 @@
             };
         }
         
-        // Extraction button specific handler for Safari
-        $('#extraction-button').on('click', function() {
+        // Extraction button specific handler
+        $('#extraction-button').on('click', function(e) {
+            // Show status section
             if (typeof window.showStatusSection === 'function') {
                 window.showStatusSection();
             }
@@ -550,8 +551,22 @@
                         // Start tracking job progress
                         jobProgress.startTracking(data.job_id);
                     } else {
-                        // Redirect to the job list if no job ID
-                        window.location.href = '{% url "core:job_list" %}';
+                        // Remove redirection to job list 
+                        // window.location.href = '{% url "core:job_list" %}';
+                        
+                        // Show a success message in the status section
+                        const details = document.getElementById('processing-details');
+                        if (details) {
+                            details.innerHTML = '<p>Processing completed successfully.</p>';
+                            details.style.display = 'block';
+                        }
+                        
+                        // Update processing status badge
+                        const statusBadge = document.getElementById('processing-status-badge');
+                        if (statusBadge) {
+                            statusBadge.className = 'badge bg-success';
+                            statusBadge.textContent = 'Completed';
+                        }
                     }
                 } else {
                     // Handle errors
